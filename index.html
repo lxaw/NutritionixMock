@@ -83,9 +83,64 @@
     }
 
 
+    // on keyup query db
+    //
     $("#input__food-info").keyup(debounce( ()=>{
+            queryDb();
+        },1000
+    ));
 
+    // on change of select query db
+    //
+    $("#select__db-options").change(()=>{
+        queryDb();
+    })
 
+    function displayMore(trE){
+        /*
+        Queries the db to provide more info on the food.
+        Looks for match of description and restaurant.
+        */
+        var strFoodName = $(trE).attr('data-description');
+        var strRestaurantName = $(trE).attr('data-restaurant');
+        var strDBType = $("#select__db-options").val();
+        // if fdc_id present, get
+        var strFdcId = $(trE).attr('data-fdc-id');
+
+        console.log('querying for: '+ strFoodName + " from " + strRestaurantName);
+
+        $.ajax({
+            url: "php_funcs/query_info.php",
+            type:'GET',
+            dataType:'html',
+            data:{
+                strFoodName:strFoodName,
+                strRestaurantName: strRestaurantName,
+                strDBType:strDBType,
+                strFdcId:strFdcId
+            },
+            success:function(data){
+                console.log('done');
+                console.log(data);
+                // writes data to results div
+                //
+
+                // remove old results
+                $('#div__modal-holder').html('');
+                // add new results
+                $("#div__modal-holder").html(data);
+
+                // show modal
+                $('#simpleModal').modal('show');
+            }
+        }).done(function(response){
+            console.log('success');
+        }).fail(function(response){
+            console.log('fail');
+        })
+    }
+
+    function queryDb(){
         var strFoodQuery = $("#input__food-info").val();
         // update the name of the query
         //
@@ -113,44 +168,6 @@
                 // writes data to results div
                 //
                 $("#div__results-container").html(data);
-            }
-        }).done(function(response){
-            console.log('success');
-        }).fail(function(response){
-            console.log('fail');
-        })
-        },1000
-    ));
-
-    function displayMore(trE){
-        /*
-        Queries the db to provide more info on the food.
-        Looks for match of description and restaurant.
-        */
-        var strFoodName = $(trE).attr('data-description');
-        var strRestaurantName = $(trE).attr('data-restaurant');
-
-        console.log('querying for: '+ strFoodName + " from " + strRestaurantName);
-
-        $.ajax({
-            url: "php_funcs/query_info.php",
-            type:'GET',
-            dataType:'html',
-            data:{
-                strFoodName:strFoodName,
-                strRestaurantName: strRestaurantName,
-            },
-            success:function(data){
-                // writes data to results div
-                //
-
-                // remove old results
-                $('#div__modal-holder').html('');
-                // add new results
-                $("#div__modal-holder").html(data);
-
-                // show modal
-                $('#simpleModal').modal('show');
             }
         }).done(function(response){
             console.log('success');

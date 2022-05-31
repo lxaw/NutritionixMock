@@ -45,5 +45,6 @@ if(
             break;
         default:
             echo('Error query_names.php: Need to choose valid strDBType');
+            break;
     }
 }
