@@ -15,3 +15,13 @@ function strGetImgPath($strFoodName,$strRestaurantName,$strSourcePath){
     return 
         strtolower($strSourcePath."/".$strFormattedRestName."/".$strFormattedRestName."___".$strFormattedFoodName.".jpeg");
 }
+
+function strGetImgPathNoRestaurant($strFoodName,$strSourcePath){
+    // for usda_no_branded
+    // TO DO:
+    // See if better way to do this.
+    $strFormattedFoodName = str_replace("/","~",$strFoodName);
+    $strFormattedFoodName= str_replace(" ","_",$strFormattedFoodName);
+    return 
+        strtolower($strSourcePath."/".$strFormattedFoodName.".jpeg");
+}

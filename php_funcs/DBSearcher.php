@@ -30,7 +30,7 @@ class DBSearcher{
     // Outputs:
     // array of data on the food
     function arrQueryMenustatDetail($strFoodName,$strRestaurantName){
-        $stmt = $this->conn->mysqli()->prepare('
+        $stmt = $this->_MySQLiConnection->mysqli()->prepare('
             select
                 *
             from
@@ -78,5 +78,188 @@ class DBSearcher{
         return $templateData;
 
         $stmt->close();
+    }
+
+    // queries the menustat db for names 
+    // Input:
+    // str name of food
+    // output
+    // array of food names with their respective restaurants
+    function arrQueryMenustatNames($strQuery){
+        // TO DO:
+        // Use smarter querying
+        //
+        $strFormattedQuery = '%'.$strQuery.'%';
+
+        $intLimit = 5;
+
+        // prepare sql statement
+        $stmt = $this->_MySQLiConnection->mysqli()->prepare('
+            select
+                *
+            from
+                menustat_query
+            where
+                description like
+                    ?
+            limit
+                ?
+        ');
+
+        $stmt->bind_param("si",$strFormattedQuery,$intLimit);
+        $stmt->execute();
+        $result =$stmt->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        $strRestaurant = "";
+        $strDescription = "";
+        $strServingSize = "";
+        $strServingSizeText = "";
+        $strServingSizeUnit = "";
+        $strImgPath = "";
+
+        $strNullReplacement = "Not present in db";
+        $intIndex = 0;
+
+        $arrAllTemplateData = array();
+
+        foreach($data as $subArr){
+            // perform checks for nulls here
+            //
+            $strRestaurant = strReplaceIfNull($subArr['restaurant'],$strNullReplacement);
+            $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
+            $strImgPath = strGetImgPath($strDescription,$strRestaurant,kIMG_DIR.'/'.kMENUSTAT_IMGS);
+
+            $templateData = array(
+                "index" =>$intIndex,
+                "restaurant" => $strRestaurant,
+                "description" => $strDescription,
+                "img_path"=>$strImgPath,
+            );
+            array_push($arrAllTemplateData,$templateData);
+            $intIndex += 1;
+        }
+
+        $stmt->close();
+
+        return $arrAllTemplateData;
+    }
+
+    function arrQueryUSDABrandedNames($strQuery){
+        // TO DO:
+        // Use smarter querying
+        //
+        $strFormattedQuery = '%'.$strQuery.'%';
+
+        $intLimit = 5;
+
+        // prepare sql statement
+        $stmt = $this->_MySQLiConnection->mysqli()->prepare('
+            select
+                *
+            from
+                usda_branded_query 
+            where
+                description like
+                    ?
+            limit
+                ?
+        ');
+
+        $stmt->bind_param("si",$strFormattedQuery,$intLimit);
+        $stmt->execute();
+        $result =$stmt->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+        print_r($data);
+
+        $strRestaurant = "";
+        $strDescription = "";
+        $strImgPath = "";
+
+        $strNullReplacement = "Not present in db";
+        $intIndex = 0;
+
+        $arrAllTemplateData = array();
+
+        foreach($data as $subArr){
+            // perform checks for nulls here
+            //
+            $strRestaurant = strReplaceIfNull($subArr['brand_owner'],$strNullReplacement);
+            $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
+            $strImgPath = strGetImgPath($strDescription,$strRestaurant,kIMG_DIR.'/'.kUSDA_BRANDED_IMGS);
+
+            $templateData = array(
+                "index" =>$intIndex,
+                "restaurant" => $strRestaurant,
+                "description" => $strDescription,
+                "img_path"=>$strImgPath,
+            );
+            array_push($arrAllTemplateData,$templateData);
+            $intIndex += 1;
+        }
+
+        $stmt->close();
+
+        return $arrAllTemplateData;
+    }
+
+    function arrQueryUSDANonBrandedNames($strQuery){
+        // TO DO:
+        // Use smarter querying
+        //
+        $strFormattedQuery = '%'.$strQuery.'%';
+
+        $intLimit = 5;
+
+        // prepare sql statement
+        $stmt = $this->_MySQLiConnection->mysqli()->prepare('
+            select
+                *
+            from
+                usda_non_branded_query 
+            where
+                description like
+                    ?
+            limit
+                ?
+        ');
+
+        $stmt->bind_param("si",$strFormattedQuery,$intLimit);
+        $stmt->execute();
+        $result =$stmt->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+        print_r($data);
+
+        $strRestaurant = "";
+        $strDescription = "";
+        $strImgPath = "";
+
+        $strNullReplacement = "Not present in db";
+        $intIndex = 0;
+
+        $arrAllTemplateData = array();
+
+        foreach($data as $subArr){
+            // perform checks for nulls here
+            //
+            $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
+            // to do:
+            // usda_non_branded has no restaurant / brand owner info, so the
+            // format for an image path is slightly different
+            //
+            $strImgPath = strGetImgPathNoRestaurant($strDescription,kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
+
+            $templateData = array(
+                "index" =>$intIndex,
+                "description" => $strDescription,
+                "img_path"=>$strImgPath,
+            );
+            array_push($arrAllTemplateData,$templateData);
+            $intIndex += 1;
+        }
+
+        $stmt->close();
+
+        return $arrAllTemplateData;
     }
 }

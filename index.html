@@ -85,7 +85,6 @@
 
     $("#input__food-info").keyup(debounce( ()=>{
 
-        // alert($("#select__db-options").val());
 
         var strFoodQuery = $("#input__food-info").val();
         // update the name of the query
@@ -100,12 +99,15 @@
         }
         // query the db based on if menustat, branded usda, or reg usda selected
         //
+        var strDBType = $("#select__db-options").val();
+
         $.ajax({
             url: "php_funcs/query_names.php",
             type:'GET',
             dataType:'html',
             data:{
-                strQuery:strFoodQuery
+                strQuery:strFoodQuery,
+                strDBType:strDBType
             },
             success:function(data){
                 // writes data to results div
@@ -139,7 +141,6 @@
                 strRestaurantName: strRestaurantName,
             },
             success:function(data){
-                console.log(data);
                 // writes data to results div
                 //
 
