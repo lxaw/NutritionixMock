@@ -85,13 +85,11 @@ class DBSearcher{
     // str name of food
     // output
     // array of food names with their respective restaurants
-    function arrQueryMenustatNames($strQuery){
+    function arrQueryMenustatNames($strQuery,$intPerPage){
         // TO DO:
         // Use smarter querying
         //
         $strFormattedQuery = '%'.$strQuery.'%';
-
-        $intLimit = 5;
 
         // prepare sql statement
         $stmt = $this->_MySQLiConnection->mysqli()->prepare('
@@ -106,7 +104,7 @@ class DBSearcher{
                 ?
         ');
 
-        $stmt->bind_param("si",$strFormattedQuery,$intLimit);
+        $stmt->bind_param("si",$strFormattedQuery,$intPerPage);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);

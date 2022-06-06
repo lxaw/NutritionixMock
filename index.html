@@ -42,6 +42,28 @@
                     </h2>
                 </option>
             </select>
+            <select id = "input__per-page">
+                <option selected value = "5">
+                    5
+                </option>
+                <option value = "10">
+                    10
+                </option>
+                <option value = "20">
+                    20
+                </option>
+            </select>
+            <br>
+            <div class = 'container border border-dark m-3 p-3'>
+                <h4>
+                    Stored Foods
+                </h4>
+                <hr>
+                <div class = 'container' id = "div__store-food-container">
+
+                </div>
+            </div>
+            <br>
             <div>
                 <h4>
                     Raw Results for <span id = "span__food-query">...</span>
@@ -82,6 +104,11 @@
         };
     }
 
+    // add to saved button //
+    function addToSavedClick(e){
+        console.log(e);
+    }
+
 
     // on keyup query db
     //
@@ -95,6 +122,12 @@
     $("#select__db-options").change(()=>{
         queryDb();
     })
+    // on change of select query db 
+    //
+    $("#input__per-page").change(()=>{
+        queryDb();
+    })
+
 
     function displayMore(trE){
         /*
@@ -132,6 +165,14 @@
 
                 // show modal
                 $('#simpleModal').modal('show');
+
+                // allow add to save button to work
+                //
+                $('.modal').each((i,e)=>{
+                    $(e).find('.btn__add-to-saved').first().click(()=>{
+                        addToSavedClick($(e));
+                    });
+                })
             }
         }).done(function(response){
             console.log('success');
@@ -140,8 +181,15 @@
         })
     }
 
+    // get names from db
+    //
     function queryDb(){
+        // get name of food
+        //
         var strFoodQuery = $("#input__food-info").val();
+        // get amount per page
+        //
+        var intPerPage = $("#input__per-page").val();
         // update the name of the query
         //
         $("#span__food-query").text(strFoodQuery!="" ? strFoodQuery : "...");
@@ -152,6 +200,7 @@
             $("#div__results-container").html("");
             return;
         }
+
         // query the db based on if menustat, branded usda, or reg usda selected
         //
         var strDBType = $("#select__db-options").val();
@@ -162,7 +211,8 @@
             dataType:'html',
             data:{
                 strQuery:strFoodQuery,
-                strDBType:strDBType
+                strDBType:strDBType,
+                intPerPage:intPerPage
             },
             success:function(data){
                 // writes data to results div
