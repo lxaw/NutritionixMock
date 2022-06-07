@@ -54,12 +54,12 @@
                 </option>
             </select>
             <br>
-            <div class = 'container border border-dark m-3 p-3'>
+            <div class = 'container m-3 p-3'>
                 <h4>
                     Stored Foods
                 </h4>
                 <hr>
-                <div class = 'container' id = "div__store-food-container">
+                <div class = 'container overflow-scroll' id = "div__stored-food-container">
 
                 </div>
             </div>
@@ -88,6 +88,14 @@
     <div id = "div__modal-holder">
 
     </div>
+
+<!-- 
+    For hidden saved entry
+-->
+<?php
+    include('templates/general/stored_food_entry.html');
+?>
+
 </body>
 
 </html>
@@ -106,7 +114,7 @@
 
     // add to saved button //
     function addToSavedClick(e){
-        console.log(e);
+        console.log(e.children);
     }
 
 
@@ -153,8 +161,6 @@
                 strFdcId:strFdcId
             },
             success:function(data){
-                console.log('done');
-                console.log(data);
                 // writes data to results div
                 //
 
@@ -166,13 +172,45 @@
                 // show modal
                 $('#simpleModal').modal('show');
 
-                // allow add to save button to work
-                //
-                $('.modal').each((i,e)=>{
-                    $(e).find('.btn__add-to-saved').first().click(()=>{
-                        addToSavedClick($(e));
-                    });
+                $('#simpleModal').find('.btn__add-to-saved').first().click(()=>{
+                    let divClone = $('#div__hidden-saved-entry').clone();
+                    let modalModal = $('#simpleModal');
+                    // remove id
+                    //
+                    divClone.attr('id','');
+                    // get img src
+                    //
+                    let imgSrc = modalModal.find('.img__food-img').first().attr('src');
+                    // get restaurant
+                    //
+                    let strRestaurantName = modalModal.find('.span__restaurant').first().text();
+                    // get servingsize
+                    //
+                    let strServingSize = modalModal.find('.span__serving-size').first().text();
+                    // get unit
+                    //
+                    let strServingSizeUnit = modalModal.find('.span__serving-size-unit').first().text();
+                    // get cals
+                    //
+                    let strCalories = modalModal.find('.span__calories').first().text();
+                    // get name
+                    //
+                    let strDescription = modalModal.find('.span__description').first().text();
+
+                    divClone.find('.img__food-img').attr('src',imgSrc);
+                    divClone.find('.span__restaurant').first().text(strRestaurantName);
+                    divClone.find('.span__description').first().text(strDescription)
+                    divClone.find('.span__kilocalories').first().text(strCalories);
+                    divClone.find('.span__serving-size').first().text(strServingSize);
+                    divClone.find('.span__serving-size-unit').first().text(strServingSizeUnit);
+
+                    // display it
+                    //
+                    divClone.css('display','');
+
+                    $('#div__stored-food-container').append(divClone);
                 })
+                
             }
         }).done(function(response){
             console.log('success');

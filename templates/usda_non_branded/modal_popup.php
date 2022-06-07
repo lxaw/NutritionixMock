@@ -13,10 +13,8 @@
                     <img src="[img_src]" alt="img" class = 'img-thumbnail'>
                 </div>
                 <p>
-                    Brand Owner: [brand_owner]
-                </p>
-                <p>
-                    Servings: [serving_size] [serving_size_unit]
+                    Servings: [serving_amount] [portion_modifier]
+                    In grams: [portion_gram_weight]
                 </p>
                 <p>
                     Carbohydrate: [carbohydrate] [carbohydrate_unit]
@@ -32,7 +30,14 @@
                 </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <div class = "d-flex justify-content-between">
+                    <button type = "button" class = "btn btn-primary btn__add-to-saved">
+                        Add to Saved
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>

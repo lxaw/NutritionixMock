@@ -27,7 +27,7 @@ if(
 
             // load the data into html
             //
-            $tempBody = load_template_to_string($arrTemplateData,'../templates/menustat/modal_popup.html');
+            $tempBody = load_template_to_string($arrTemplateData,'../templates/menustat/modal_popup.php');
             // echo the html
             //
             echo($tempBody);
@@ -37,7 +37,7 @@ if(
 
             // load the data into html
             //
-            $tempBody = load_template_to_string($arrTemplateData,'../templates/usda_branded/modal_popup.html');
+            $tempBody = load_template_to_string($arrTemplateData,'../templates/usda_branded/modal_popup.php');
             // echo the html
             //
             echo($tempBody);
@@ -47,7 +47,7 @@ if(
 
             // load the data into html
             //
-            $tempBody = load_template_to_string($arrTemplateData,'../templates/usda_non_branded/modal_popup.html');
+            $tempBody = load_template_to_string($arrTemplateData,'../templates/usda_non_branded/modal_popup.php');
             // echo the html
             //
             echo($tempBody);

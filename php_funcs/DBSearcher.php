@@ -385,7 +385,7 @@ class DBSearcher{
                 // get servings
                 //
                 $strServingAmount = strReplaceIfNull($subArr['serving_amount'],$strNullReplacement);
-                $strPortionModifier = strReplaceIfNull($subArr['serving_size_unit'],$strNullReplacement);
+                $strPortionModifier = strReplaceIfNull($subArr['portion_modifier'],$strNullReplacement);
                 $strPortionGramWeight= strReplaceIfNull($subArr['portion_gram_weight'],$strNullReplacement);
                 $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
                 $strImgSrc = strGetImgPathNoRestaurant($strDescription,kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
