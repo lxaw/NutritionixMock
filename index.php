@@ -90,11 +90,20 @@
     </div>
 
 <!-- 
-    For hidden saved entry
+    For hidden menustat entry
 -->
 <?php
-    include('templates/general/stored_food_entry.html');
+    include('templates/general/menustat_entry.html');
 ?>
+
+<!-- 
+    For hidden branded entry
+ -->
+
+<!-- 
+    For hidden non-branded entry
+ -->
+
 
 </body>
 

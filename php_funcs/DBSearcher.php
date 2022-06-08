@@ -362,7 +362,7 @@ class DBSearcher{
             from
                 usda_non_branded 
             where
-                fdc_id = '.$strFdcId.'
+                fdc_id = '.$strFdcId.' 
         ');
         // TO DO:
         // Dont know why bind_param is not working here.
@@ -402,8 +402,10 @@ class DBSearcher{
             //
             switch($subArr['nutrient_name']){
                 case 'Energy':
-                    $templateData['energy'] = $subArr['nutrient_amount'];
-                    $templateData['energy_unit'] = $subArr['nutrient_unit'];
+                    if($subArr['nutrient_unit'] == "KCAL"){
+                        $templateData['calories'] = $subArr['nutrient_amount'];
+                        $templateData['energy_unit'] = $subArr['nutrient_unit'];
+                    }
                     break;
                 case 'Carbohydrate, by difference':
                     $templateData['carbohydrate'] = $subArr['nutrient_amount'];

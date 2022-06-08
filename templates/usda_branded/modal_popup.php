@@ -15,16 +15,13 @@
             </div>
             <div class="modal-body">
                 <div class="container m-3 p-3">
-                    <img src="[img_src]" alt="img" class = 'img-thumbnail'>
+                    <img src="[img_src]" alt="img" class = 'img-thumbnail img__food-img'>
                 </div>
                 <p>
                     Brand Owner: <span class = "span__restaurant">[brand_owner]</span>
                 </p>
                 <p>
                     Servings: <span class = "span__serving-size">[serving_size]</span> <span class = 'span__serving-size-unit'>[serving_size_unit]</span>
-                </p>
-                <p>
-                    Calories: <span class = 'span__calories'>[calories]</span>
                 </p>
                 <p>
                     Carbohydrate: [carbohydrate] [carbohydrate_unit]
@@ -36,7 +33,7 @@
                     Protein: [protein] [protein_unit]
                 </p>
                 <p>
-                    Energy: [energy] [energy_unit]
+                    Energy: <span class = 'span__calories'>[energy]</span> [energy_unit]
                 </p>
             </div>
             <div class="modal-footer">

@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <div class="container m-3 p-3">
-                    <img src="[img_src]" alt="img" class = 'img-thumbnail'>
+                    <img src="[img_src]" alt="img" class = 'img-thumbnail img__food-img'>
                 </div>
                 <p>
                     Servings: [serving_amount] [portion_modifier]
@@ -26,7 +26,7 @@
                     Protein: [protein] [protein_unit]
                 </p>
                 <p>
-                    Energy: [energy] [energy_unit]
+                    KCals: <span class = 'span__calories'>[calories] </span>
                 </p>
             </div>
             <div class="modal-footer">
