@@ -373,14 +373,30 @@ class DBSearcher{
         $data = $result->fetch_all(MYSQLI_ASSOC);
         $strNullReplacement = "Not present in db";
 
+
+        // template data has fdc_id and
+        // a arrays for each serving size and
+        // nutrient pattern
+        // for instance, if serving size is 1 cup for one and
+        // 1 slice for other, need to put different nutrients in there
+        //
         $templateData = array(
             'fdc_id'=>$strFdcId,
         );
 
-        // get nutrients
+        // get each entry that has a different serving amount
         //
-        $boolFirstLoop =TRUE;
+        $strLastServingUnit = strReplaceIfNull($subArr['portion_modifier']);
+
         foreach($data as $subArr){
+            // store an array for the last items
+            //
+            $arrEntryItems = array();
+
+            // get the last serving unit
+            //
+            
+
             if($boolFirstLoop){
                 // get servings
                 //
