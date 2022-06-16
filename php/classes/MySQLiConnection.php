@@ -5,7 +5,7 @@
 
 // get configs
 //
-include_once('db_config.php');
+include_once('../configs/db_config.php');
 
 // Class to create connection to 
 // mysql server

@@ -24,34 +24,16 @@
                     Servings: <span class = "span__serving-size">[serving_size]</span> <span class = 'span__serving-size-unit'>[serving_size_unit]</span>
                 </p>
                 <p>
-                    Calories: <span class = 'span__calories'>[calories]</span>
+                    Calories: <span class = 'span__calories'>[energy_amount]</span>
                 </p>
                 <p>
-                    Carbs: [carbohydrates]
+                    Carbs: [carb_amount]
                 </p>
                 <p>
-                    Cholestoral: [cholesterol]
+                    Protein: [protein_amount]
                 </p>
                 <p>
-                    Dietary Fiber: [dietary_fiber]
-                </p>
-                <p>
-                    Potassium: [potassium]
-                </p>
-                <p>
-                    Protein: [protein]
-                </p>
-                <p>
-                    Saturated Fat: [saturated_fat]
-                </p>
-                <p>
-                    Sugar: [sugar]
-                </p>
-                <p>
-                    Total Fat: [total_fat]
-                </p>
-                <p>
-                    Trans Fat: [trans_fat]
+                    Total Fat: [fat_amount]
                 </p>
             </div>
             <div class="modal-footer">

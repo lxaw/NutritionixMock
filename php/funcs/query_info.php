@@ -5,7 +5,12 @@ error_reporting(E_ALL);
 
 // for searching
 //
-require_once('DBSearcher.php');
+require_once('../classes/DBSearcher.php');
+
+// for populating html values
+//
+require_once('../classes/TemplateLoader.php');
+
 
 if(
     isset($_GET['strFoodName'])
@@ -19,6 +24,10 @@ if(
     //
     $dbSearcher = new DBSearcher();
 
+    // create new template loader
+    //
+    $templateLoader = new TemplateLoader();
+
     // search the db for food details
     //
     switch($_GET['strDBType']){
@@ -27,7 +36,7 @@ if(
 
             // load the data into html
             //
-            $tempBody = load_template_to_string($arrTemplateData,'../templates/menustat/modal_popup.php');
+            $tempBody = $templateLoader->strTemplateToStr($arrTemplateData,'../templates/menustat/modal_popup.php');
             // echo the html
             //
             echo($tempBody);
@@ -37,20 +46,38 @@ if(
 
             // load the data into html
             //
-            $tempBody = load_template_to_string($arrTemplateData,'../templates/usda_branded/modal_popup.php');
+            $tempBody = $templateLoader->strTemplateToStr($arrTemplateData,'../templates/usda_branded/modal_popup.php');
             // echo the html
             //
             echo($tempBody);
             break;
         case "usda_non-branded":
+            // likely to get more than one entry, so need to return multiple
+            //
             $arrTemplateData = $dbSearcher->arrQueryUSDANonBrandedDetail($_GET['strFdcId']);
 
             // load the data into html
             //
-            $tempBody = load_template_to_string($arrTemplateData,'../templates/usda_non_branded/modal_popup.php');
+            // *****************************
+            // TO DO:
+            // return an array of template loads
+            // get select
+            //
+
+            $strModal = $templateLoader->strPopulateUsdaNonBrandedModal($arrTemplateData);
+
+            // return both the datatype and the templates
+            //
+            $arrRet = array(
+                'data_type'=>$arrTemplateData['data_type'],
+                // 'templates'=>$tempBody
+                'modal'=>$strModal
+            );
+
+
             // echo the html
             //
-            echo($tempBody);
+            echo(json_encode($arrRet));
             break;
         default:
             echo('Error query_info.php: Need to choose valid strDBType');

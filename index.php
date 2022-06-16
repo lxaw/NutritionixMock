@@ -8,7 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>Menustat Demo</title>
+    <title>Nutritionix Mock Demo</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -59,7 +59,7 @@
                     Stored Foods
                 </h4>
                 <hr>
-                <div class = 'container overflow-scroll' id = "div__stored-food-container">
+                <div class = 'container overflow-scroll' id = "div__saved-food-container">
 
                 </div>
             </div>
@@ -93,7 +93,7 @@
     For hidden menustat entry
 -->
 <?php
-    include('templates/general/menustat_entry.html');
+    include('templates/menustat/menustat_saved_entry.html');
 ?>
 
 <!-- 
@@ -103,6 +103,9 @@
 <!-- 
     For hidden non-branded entry
  -->
+<?php
+    include('templates/usda_non_branded/usda_non_branded_saved_entry.html');
+?>
 
 
 </body>
@@ -122,8 +125,37 @@
     }
 
     // add to saved button //
-    function addToSavedClick(e){
-        console.log(e.children);
+    function addToSavedClick(strDataType,modalModal){
+        // depending on data type, change how saved info looks
+        //
+        
+        switch(strDataType){
+            // we need to get the info from the modal
+            // and put it in the saved entry
+            //
+            
+            case 'usda_non_branded':
+                let divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
+                // remove id
+                divSavedEntry.attr('id','');
+
+                // get info
+                let strDescription = modalModal.find('.span__description').first().text();
+                let strPortionModifier = modalModal.find('.span__portion_modifier').first().text();
+                let strKcals = modalModal.find('.span__kilocalories').first().text();
+
+                console.log(strKcals);
+
+                break;
+            case 'usda_branded':
+                break;
+            case 'menustat':
+                break;
+            default:
+                // incorrect datatype, do nothing
+                console.log('error: addToSavedClick\ninvalid datatype');
+                break;
+        }
     }
 
 
@@ -153,14 +185,17 @@
         */
         var strFoodName = $(trE).attr('data-description');
         var strRestaurantName = $(trE).attr('data-restaurant');
+
+        // consider the type of data
+        // ie: menustat, usda_branded, usda_non_branded
+        //
         var strDBType = $("#select__db-options").val();
         // if fdc_id present, get
+        //
         var strFdcId = $(trE).attr('data-fdc-id');
 
-        console.log('querying for: '+ strFoodName + " from " + strRestaurantName);
-
         $.ajax({
-            url: "php_funcs/query_info.php",
+            url: "php/funcs/query_info.php",
             type:'GET',
             dataType:'html',
             data:{
@@ -170,54 +205,51 @@
                 strFdcId:strFdcId
             },
             success:function(data){
-                // writes data to results div
+                // data is an array of
+                // type 
+                // {'data_type': STRING
+                // 'templates': ARRAY}
                 //
+
+                // sanity check
+                console.log(data);
+                let arrData = JSON.parse(data);
+
+
+                // datatype
+                //
+                let strDataType = arrData['data_type'];
+                // array of template entries
+                // templates are just html
+                //
+                let strModal = arrData['modal'];
 
                 // remove old results
                 $('#div__modal-holder').html('');
                 // add new results
-                $("#div__modal-holder").html(data);
+                $("#div__modal-holder").html(strModal);
 
                 // show modal
                 $('#simpleModal').modal('show');
 
+                // add on select change feature
+                //
+                $('#simpleModal').find('select').first().change(()=>{
+                    // get the portion modifier
+                    //
+                    let strPortionModifier = $('#simpleModal').find('select').first().find(':selected').val()
+
+                    // make all info divs invisible
+                    //
+                    $('#simpleModal').find('.div__popup-data').css('display','none');
+                    // make the selected div visible
+                    //
+                    $('#simpleModal').find('#div__popup-data-'+strPortionModifier).css('display','');
+                })
+                // add a save feature
+                //
                 $('#simpleModal').find('.btn__add-to-saved').first().click(()=>{
-                    let divClone = $('#div__hidden-saved-entry').clone();
-                    let modalModal = $('#simpleModal');
-                    // remove id
-                    //
-                    divClone.attr('id','');
-                    // get img src
-                    //
-                    let imgSrc = modalModal.find('.img__food-img').first().attr('src');
-                    // get restaurant
-                    //
-                    let strRestaurantName = modalModal.find('.span__restaurant').first().text();
-                    // get servingsize
-                    //
-                    let strServingSize = modalModal.find('.span__serving-size').first().text();
-                    // get unit
-                    //
-                    let strServingSizeUnit = modalModal.find('.span__serving-size-unit').first().text();
-                    // get cals
-                    //
-                    let strCalories = modalModal.find('.span__calories').first().text();
-                    // get name
-                    //
-                    let strDescription = modalModal.find('.span__description').first().text();
-
-                    divClone.find('.img__food-img').attr('src',imgSrc);
-                    divClone.find('.span__restaurant').first().text(strRestaurantName);
-                    divClone.find('.span__description').first().text(strDescription)
-                    divClone.find('.span__kilocalories').first().text(strCalories);
-                    divClone.find('.span__serving-size').first().text(strServingSize);
-                    divClone.find('.span__serving-size-unit').first().text(strServingSizeUnit);
-
-                    // display it
-                    //
-                    divClone.css('display','');
-
-                    $('#div__stored-food-container').append(divClone);
+                    addToSavedClick(strDataType,$('#simpleModal'));
                 })
                 
             }
@@ -253,7 +285,7 @@
         var strDBType = $("#select__db-options").val();
 
         $.ajax({
-            url: "php_funcs/query_names.php",
+            url: "php/funcs/query_names.php",
             type:'GET',
             dataType:'html',
             data:{
@@ -271,6 +303,6 @@
         }).fail(function(response){
             console.log('fail');
         })
-    }
+    };
 
 </script>

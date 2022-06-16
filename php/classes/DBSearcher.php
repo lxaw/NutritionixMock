@@ -1,23 +1,31 @@
 <?php
 // for connection to db
 //
-require_once('db_connect.php');
+require_once('MySQLiConnection.php');
 // for str replace if null
 //
-require_once('str_replace_if_null.php');
-
-// for template to str
-//
-require_once('template_to_str.php');
+require_once('../funcs/str_replace_if_null.php');
 
 // for get img path 
 //
-require_once('str_get_img_path.php');
+require_once('../funcs/str_get_img_path.php');
+
+
+// data types
+// these are returned to javascript so that
+// we can know what type of data is returned
+//
+define('kDataTypeUsdaNonBranded','usda_non_branded');
+define('kDataTypeUsdaBranded','usda_branded');
+define('kDataTypeMenustat','menustat');
 
 class DBSearcher{
+    // for connection to mysql
+    //
     private $_MySQLiConnection;
 
     function __construct(){
+        // upon construction create a mysql connection
         $this->_MySQLiConnection = new MySQLiConnection();
     }
 
@@ -34,7 +42,7 @@ class DBSearcher{
             select
                 *
             from
-                menustat
+                menustat_single_rows 
             where
                 description = "'.$strFoodName.'"
             and
@@ -52,25 +60,25 @@ class DBSearcher{
         $templateData = array(
             'description'=>$strFoodName,
             'restaurant'=>$strRestaurantName,
+            'kcals'=>'',
+            'protein'=>'',
+            'carbs'=>'',
+            'fat'=>'',
+            'serving_size'=>'',
+            'serving_size_unit'=>'',
             'img_src'=>strGetImgPath($strFoodName,$strRestaurantName,kIMG_DIR.'/'.kMENUSTAT_IMGS)
         );
         
 
-        // get nutrients
+        // should only provide one entry, thus loop only once
         //
-        $boolFirstLoop =TRUE;
         foreach($data as $subArr){
-            if($boolFirstLoop){
-                // get servings
-                //
-                $strServingSize = strReplaceIfNull($subArr['serving_size'],$strNullReplacement);
-                $strServingSizeUnit = strReplaceIfNull($subArr['serving_size_unit'],$strNullReplacement);
-                $templateData['serving_size'] = $strServingSize;
-                $templateData['serving_size_unit'] = $strServingSizeUnit;
-            }
-            $strNutrientName = strReplaceIfNull($subArr['nutrient_name'],$strNullReplacement);
-            $strNutrientAmount = strReplaceIfNull($subArr['nutrient_amount'],$strNullReplacement);
-            $templateData[$strNutrientName]= $strNutrientAmount;
+            $templateData['serving_size'] = strReplaceIfNull($subArr['serving_size'],$strNullReplacement);
+            $templateData['serving_size_unit'] =  strReplaceIfNull($subArr['serving_size_unit'],$strNullReplacement);
+            $templateData['energy_amount']= strReplaceIfNull($subArr['energy_amount'],$strNullReplacement);
+            $templateData['protein_amount'] = strReplaceIfNull($subArr['protein_amount'],$strNullReplacement);
+            $templateData['fat_amount'] = strReplaceIfNull($subArr['fat_amount'],$strNullReplacement);
+            $templateData['carb_amount'] = strReplaceIfNull($subArr['carb_amount'],$strNullReplacement);
         }
         // get serving sizes
         //
@@ -210,6 +218,9 @@ class DBSearcher{
         //
         $strFormattedQuery = '%'.$strQuery.'%';
 
+        // to do:
+        // allow this to change dynamically
+        //
         $intLimit = 5;
 
         // prepare sql statement
@@ -293,6 +304,7 @@ class DBSearcher{
         $data = $result->fetch_all(MYSQLI_ASSOC);
         $strNullReplacement = "Not present in db";
 
+
         $templateData = array(
             'fdc_id'=>$strFdcId,
         );
@@ -360,7 +372,7 @@ class DBSearcher{
             select
                 *
             from
-                usda_non_branded 
+                usda_non_branded_single_rows
             where
                 fdc_id = '.$strFdcId.' 
         ');
@@ -374,68 +386,45 @@ class DBSearcher{
         $strNullReplacement = "Not present in db";
 
 
-        // template data has fdc_id and
-        // a arrays for each serving size and
-        // nutrient pattern
-        // for instance, if serving size is 1 cup for one and
-        // 1 slice for other, need to put different nutrients in there
+        // Note! 
+        // There may be multiple entries for each serving size
+        // thus we have an array of template data here
         //
         $templateData = array(
+            // return the datatype to js
+            'data_type'=>kDataTypeUsdaNonBranded,
             'fdc_id'=>$strFdcId,
         );
 
-        // get each entry that has a different serving amount
-        //
-        $strLastServingUnit = strReplaceIfNull($subArr['portion_modifier']);
-
-        foreach($data as $subArr){
-            // store an array for the last items
+        $boolFirstLoop = TRUE;
+        foreach($data as $tableEntry){
+            // get the description (only need to get once)
             //
-            $arrEntryItems = array();
-
-            // get the last serving unit
-            //
-            
-
             if($boolFirstLoop){
-                // get servings
-                //
-                $strServingAmount = strReplaceIfNull($subArr['serving_amount'],$strNullReplacement);
-                $strPortionModifier = strReplaceIfNull($subArr['portion_modifier'],$strNullReplacement);
-                $strPortionGramWeight= strReplaceIfNull($subArr['portion_gram_weight'],$strNullReplacement);
-                $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
-                $strImgSrc = strGetImgPathNoRestaurant($strDescription,kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
+                $templateData['description'] = strReplaceIfNull($tableEntry['description'],$strNullReplacement);
+                $templateData['img_src'] = strGetImgPathNoRestaurant($templateData['description'],kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
+                $boolFirstLoop = FALSE;
+            }
 
-                $templateData['serving_amount'] = $strServingAmount;
-                $templateData['portion_modifier'] = $strPortionModifier;
-                $templateData['portion_gram_weight'] = $strPortionGramWeight;
-                $templateData['description'] = $strDescription;
-                $templateData['img_src'] = $strImgSrc;
-            }
-            // go thru the nutrients we want
-            // note that there are a total of 101 nutrients, we only need about 3
-            // Want carbs, fat, protein, energy
+            // likely have multiple table entries
             //
-            switch($subArr['nutrient_name']){
-                case 'Energy':
-                    if($subArr['nutrient_unit'] == "KCAL"){
-                        $templateData['calories'] = $subArr['nutrient_amount'];
-                        $templateData['energy_unit'] = $subArr['nutrient_unit'];
-                    }
-                    break;
-                case 'Carbohydrate, by difference':
-                    $templateData['carbohydrate'] = $subArr['nutrient_amount'];
-                    $templateData['carbohydrate_unit'] = $subArr['nutrient_unit'];
-                    break;
-                case 'Total lipid (fat)':
-                    $templateData['fat'] = $subArr['nutrient_amount'];
-                    $templateData['fat_unit'] = $subArr['nutrient_unit'];
-                    break;
-                case 'Protein':
-                    $templateData['protein'] = $subArr['nutrient_amount'];
-                    $templateData['protein_unit'] = $subArr['nutrient_unit'];
-                    break;
-            }
+            $arrSubEntry = array(
+                'portion_gram_weight'=>strReplaceIfNull($tableEntry['portion_gram_weight'],$strNullReplacement),
+                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],$strNullReplacement),
+                'protein_unit'=>strReplaceIfNull($tableEntry['protein_unit'],$strNullReplacement),
+                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],$strNullReplacement),
+                'energy_unit'=>strReplaceIfNull($tableEntry['energy_unit'],$strNullReplacement),
+                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],$strNullReplacement),
+                'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],$strNullReplacement),
+                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],$strNullReplacement),
+                'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],$strNullReplacement),
+                'portion_modifier'=>strReplaceIfNull($tableEntry['portion_modifier'],$strNullReplacement),
+                'portion_description'=>strReplaceIfNull($tableEntry['portion_description'],$strNullReplacement),
+                'portion_gram_weight'=>strReplaceIfNull($tableEntry['portion_gram_weight'],$strNullReplacement)
+            );
+            // push to template data
+            //
+            array_push($templateData,$arrSubEntry);
         }
         // get serving sizes
         //

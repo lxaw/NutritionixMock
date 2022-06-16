@@ -5,7 +5,11 @@ error_reporting(E_ALL);
 
 // for search the db
 //
-require_once('DBSearcher.php');
+require_once('../classes/DBSearcher.php');
+
+// for popuplate html
+//
+require_once('../classes/TemplateLoader.php');
 
 // return query
 //
@@ -19,29 +23,39 @@ if(
     // for connect to db
     //
     $dbSearcher = new DBSearcher();
+    // for populate html
+    //
+    $templateLoader = new TemplateLoader();
 
     // search based on db type
     //
     switch($_GET['strDBType']){
+        // go thru db types and return data
+        //
+
+        // TO DO:
+        // Make constants for directories
+
         case "menustat":
+
             $arrAllTemplateData = $dbSearcher->arrQueryMenustatNames($_GET['strQuery'],$_GET['intPerPage']);
 
             foreach($arrAllTemplateData as $subArr){
-                $tempBody = load_template_to_string($subArr,"../templates/menustat/table_entry.html");
+                $tempBody = $templateLoader->strTemplateToStr($subArr,"../../templates/menustat/table_entry.html");
                 echo($tempBody);
             }
             break;
         case "usda_branded":
             $arrAllTemplateData = $dbSearcher->arrQueryUSDABrandedNames($_GET['strQuery'],$_GET['intPerPage']);
             foreach($arrAllTemplateData as $subArr){
-                $tempBody = load_template_to_string($subArr,'../templates/usda_branded/table_entry.html');
+                $tempBody = $templateLoader->strTemplateToStr($subArr,'../../templates/usda_branded/table_entry.html');
                 echo($tempBody);
             }
             break;
         case "usda_non-branded":
             $arrAllTemplateData = $dbSearcher->arrQueryUSDANonBrandedNames($_GET['strQuery'],$_GET['intPerPage']);
             foreach($arrAllTemplateData as $subArr){
-                $tempBody = load_template_to_string($subArr,'../templates/usda_non_branded/table_entry.html');
+                $tempBody = $templateLoader->strTemplateToStr($subArr,'../../templates/usda_non_branded/table_entry.html');
                 echo($tempBody);
             }
             break;
