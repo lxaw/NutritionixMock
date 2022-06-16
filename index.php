@@ -235,16 +235,20 @@
                 // add on select change feature
                 //
                 $('#simpleModal').find('select').first().change(()=>{
-                    // get the portion modifier
+                    // get the serving size
                     //
-                    let strPortionModifier = $('#simpleModal').find('select').first().find(':selected').val()
+                    let strServingSize =  $('#simpleModal').find('select').first().find(':selected').val();
+
+                    let strServingSizeNoSpace = strServingSize.replaceAll(' ','-');
+                    alert(strServingSizeNoSpace);
 
                     // make all info divs invisible
                     //
                     $('#simpleModal').find('.div__popup-data').css('display','none');
                     // make the selected div visible
+                    // note that id must have no spaces, so we replace spaces with '-'
                     //
-                    $('#simpleModal').find('#div__popup-data-'+strPortionModifier).css('display','');
+                    $('#simpleModal').find('#div__popup-data-'+strServingSizeNoSpace).css('display','');
                 })
                 // add a save feature
                 //

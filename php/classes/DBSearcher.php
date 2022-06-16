@@ -409,7 +409,7 @@ class DBSearcher{
             // likely have multiple table entries
             //
             $arrSubEntry = array(
-                'portion_gram_weight'=>strReplaceIfNull($tableEntry['portion_gram_weight'],$strNullReplacement),
+                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],$strNullReplacement),
                 'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],$strNullReplacement),
                 'protein_unit'=>strReplaceIfNull($tableEntry['protein_unit'],$strNullReplacement),
                 'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],$strNullReplacement),
@@ -418,9 +418,7 @@ class DBSearcher{
                 'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],$strNullReplacement),
                 'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],$strNullReplacement),
                 'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],$strNullReplacement),
-                'portion_modifier'=>strReplaceIfNull($tableEntry['portion_modifier'],$strNullReplacement),
-                'portion_description'=>strReplaceIfNull($tableEntry['portion_description'],$strNullReplacement),
-                'portion_gram_weight'=>strReplaceIfNull($tableEntry['portion_gram_weight'],$strNullReplacement)
+                'serving_text'=>strReplaceIfNull($tableEntry['serving_text'],$strNullReplacement),
             );
             // push to template data
             //

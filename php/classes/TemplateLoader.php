@@ -82,8 +82,8 @@ class TemplateLoader{
                 // create array argumnts for select
                 //
                 $arrSelectValues = array(
-                    'value'=>$subElement['portion_modifier'],
-                    'text'=>'portion: '.$subElement['portion_modifier']
+                    'value'=>$subElement['serving_text'],
+                    'text'=>'portion: '.$subElement['serving_text']
                 );
                 // append to args
                 array_push($arrSelectArgs,$arrSelectValues);
@@ -105,7 +105,11 @@ class TemplateLoader{
                 // populate modal
                 //
                 // give id
-                $modalData = str_replace('[id]','div__popup-data-'.$subElement['portion_modifier'],$modalData);
+                // the id cannot have spaces!
+                // nor parens!
+                
+                $strReplacedServingText = str_replace(array('(',')',' '),'-',$subElement['serving_text']);
+                $modalData = str_replace('[id]','div__popup-data-'.$strReplacedServingText,$modalData);
                 // give carbs
                 $modalData = str_replace('[carbohydrate_amount]',$subElement['carb_amount'],$modalData);
                 $modalData = str_replace('[carbohydrate_unit]',$subElement['carb_unit'],$modalData);
@@ -118,7 +122,7 @@ class TemplateLoader{
                 $modalData = str_replace('[protein_amount]',$subElement['protein_amount'],$modalData);
                 $modalData = str_replace('[protein_unit]',$subElement['protein_unit'],$modalData);
                 // give portion gram weight
-                $modalData = str_replace('[portion_gram_weight]',$subElement['portion_gram_weight'],$modalData);
+                $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
 
                 // append to modals
                 //
@@ -152,6 +156,12 @@ class TemplateLoader{
 
         return $strModalHtml;
     }
+
+    // creates a generic modal
+    //
+    // function strCreateModal($arrData, $strModalPath,){
+
+    // }
 
     // Populates a select
     // input:
