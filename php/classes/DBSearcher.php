@@ -212,16 +212,11 @@ class DBSearcher{
         return $arrAllTemplateData;
     }
 
-    function arrQueryUSDANonBrandedNames($strQuery){
+    function arrQueryUSDANonBrandedNames($strQuery,$intPerPage){
         // TO DO:
         // Use smarter querying
         //
         $strFormattedQuery = '%'.$strQuery.'%';
-
-        // to do:
-        // allow this to change dynamically
-        //
-        $intLimit = 5;
 
         // prepare sql statement
         $stmt = $this->_MySQLiConnection->mysqli()->prepare('
@@ -236,7 +231,7 @@ class DBSearcher{
                 ?
         ');
 
-        $stmt->bind_param("si",$strFormattedQuery,$intLimit);
+        $stmt->bind_param("si",$strFormattedQuery,$intPerPage);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -395,7 +390,6 @@ class DBSearcher{
             'data_type'=>kDataTypeUsdaNonBranded,
             'fdc_id'=>$strFdcId,
         );
-
         $boolFirstLoop = TRUE;
         foreach($data as $tableEntry){
             // get the description (only need to get once)
@@ -403,6 +397,7 @@ class DBSearcher{
             if($boolFirstLoop){
                 $templateData['description'] = strReplaceIfNull($tableEntry['description'],$strNullReplacement);
                 $templateData['img_src'] = strGetImgPathNoRestaurant($templateData['description'],kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
+                $templateData['searchable_name'] = preg_replace('/[\W]/','-',$templateData['description']);
                 $boolFirstLoop = FALSE;
             }
 

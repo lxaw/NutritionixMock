@@ -40,7 +40,11 @@ class TemplateLoader{
         // usda nb array looks like
         //
         // array(
+        //      'data_type'-> [DATABASE_NAME]
         //      'fdc_id'-> [FDC_ID]
+        //      'description'->[DESCRIPTION]
+        //      'img_src'->[IMG_SRC]
+        //      
         //      array(
         //          [ENTRY_1],
         //          [ENTRY_2],
@@ -105,11 +109,12 @@ class TemplateLoader{
                 // populate modal
                 //
                 // give id
-                // the id cannot have spaces!
-                // nor parens!
+                // id is of form
+                // div__popup-data-[NAME OF FOOD]-[INDEX OF SELECT]
+                // remove non-alphanumeric chars
+                $strModifiedDesc = preg_replace('/(\W)+/','-',$arrUsdaNBData['description']);
                 
-                $strReplacedServingText = str_replace(array('(',')',' '),'-',$subElement['serving_text']);
-                $modalData = str_replace('[id]','div__popup-data-'.$strReplacedServingText,$modalData);
+                $modalData = str_replace('[id]','div__popup-data-'.$strModifiedDesc.'-'.$intCounter,$modalData);
                 // give carbs
                 $modalData = str_replace('[carbohydrate_amount]',$subElement['carb_amount'],$modalData);
                 $modalData = str_replace('[carbohydrate_unit]',$subElement['carb_unit'],$modalData);
@@ -180,7 +185,7 @@ class TemplateLoader{
         // create the basic select
         // finish it when all options added
         //
-        $strSelect = "<select >";
+        $strSelect = "<select class = 'form-select'>";
 
         $strOption = "";
 
