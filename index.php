@@ -162,6 +162,17 @@
         let strFoodName = $(modalModal).find('.span__description').first().text();
         // get img src
         let strImgSrc = $(modalModal).find('.img__food-img').first().attr('src');
+
+        // $.ajax({
+        //     url:'php/funcs/query_save.php',
+        //     type:'GET',
+        //     dataType:'html',
+        //     data:{
+        //         strFoodName:strFoodName,
+        //         strDataType:strDataType
+        //     }
+        // });
+
         
         switch(strDataType){
             // we need to get the info from the modal

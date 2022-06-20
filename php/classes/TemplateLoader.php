@@ -101,13 +101,21 @@ class TemplateLoader{
                     // first modal data is always visible, the rest will be invisible
                     // until change the select for the serving size
                     //
-                    $modalData = file_get_contents('../../templates/usda_non_branded/popup_data_visible.html');
+                    $modalData = file_get_contents('../../templates/usda_non_branded/popup_visible.html');
                 }else{
                     // change to invisible
-                    $modalData = file_get_contents('../../templates/usda_non_branded/popup_data_invisible.html');
+                    $modalData = file_get_contents('../../templates/usda_non_branded/popup_invisible.html');
                 };
+
+                // get the template for the data
+                //
+                $templateData = file_get_contents('../../templates/usda_non_branded/popup_data.html');
+                
                 // populate modal
                 //
+                // begin by giving it the fields for the data
+                $modalData = str_replace('[popup_data]',$templateData,$modalData);
+
                 // give id
                 // id is of form
                 // div__popup-data-[NAME OF FOOD]-[INDEX OF SELECT]
