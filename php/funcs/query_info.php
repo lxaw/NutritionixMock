@@ -63,11 +63,23 @@ if(
 
             // load the data into html
             //
-            $tempBody = $templateLoader->strTemplateToStr($arrTemplateData,'../templates/usda_branded/modal_popup.php');
+
+            $strModal = $templateLoader->strPopulateUsdaBrandedModal($arrTemplateData);
             // echo the html
             //
-            echo($tempBody);
+            // return both the datatype and the templates
+            //
+            $arrRet = array(
+                'data_type'=>$arrTemplateData['data_type'],
+                // 'templates'=>$tempBody
+                'modal'=>$strModal
+            );
+
+            // echo the html
+            //
+            echo(json_encode($arrRet));
             break;
+            
         case "usda_non-branded":
             // likely to get more than one entry, so need to return multiple
             //

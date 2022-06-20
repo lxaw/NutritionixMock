@@ -1,0 +1,9 @@
+/* 
+styles for saved entry 
+*/
+.img__saved-entry{
+    height:3rem;
+}
+.p__saved-entry-text{
+    font-size:0.75rem;
+}

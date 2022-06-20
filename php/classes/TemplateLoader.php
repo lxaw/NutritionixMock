@@ -296,11 +296,139 @@ class TemplateLoader{
         return $strModalHtml;
     }
 
-    // creates a generic modal
+    // populates usda_non_branded modal
     //
-    // function strCreateModal($arrData, $strModalPath,){
+    function strPopulateUsdaBrandedModal($arrUsdaData){
+        // usda array looks like
+        //
+        // array(
+        //      'data_type'-> [DATABASE_NAME]
+        //      'fdc_id'-> [FDC_ID]
+        //      'description'->[DESCRIPTION]
+        //      'img_src'->[IMG_SRC]
+        //      
+        //      array(
+        //          [ENTRY_1],
+        //          [ENTRY_2],
+        //          ...
+        //      )
+        //
+        //)
+        //)
 
-    // }
+        // load the modal html
+        //
+        $strModalHtml = file_get_contents("../../templates/usda_branded/popup_v1.html");
+
+
+        // first create the select
+        //
+        $arrSelectArgs = array();
+
+        // store all the modal data in one big str
+        // this str is decoded by js and then used to
+        // separate each data by serving size
+        //
+        $strModalDatas = "";
+
+        // need to keep track if first loop 
+        // first loop we need to use a visible modal data,
+        // the rest can be invisible
+        // intCounter also used for id of div popups
+        //
+        $intCounter = 0;
+
+        foreach($arrUsdaData as $subElement){
+            if(gettype($subElement) == 'array'){
+                /*
+                ------------
+                Create select
+                ------------
+                */
+                // create array argumnts for select
+                //
+                $arrSelectValues = array(
+                    'value'=>$subElement['serving_size'].$subElement['serving_size_unit'],
+                    'text'=>'portion: '.$subElement['serving_size'].$subElement['serving_size_unit']
+                );
+                // append to args
+                array_push($arrSelectArgs,$arrSelectValues);
+                /*
+                ------------
+                Load modal datas
+                ------------
+                */
+                $modalData = '';
+                if($intCounter == 0){
+                    // first modal data is always visible, the rest will be invisible
+                    // until change the select for the serving size
+                    //
+                    $modalData = file_get_contents('../../templates/usda_branded/popup_visible.html');
+                }else{
+                    // change to invisible
+                    $modalData = file_get_contents('../../templates/usda_branded/popup_invisible.html');
+                };
+
+                // get the template for the data
+                //
+                $templateData = file_get_contents('../../templates/usda_non_branded/popup_data.html');
+                
+                // populate modal
+                //
+                // begin by giving it the fields for the data
+                $modalData = str_replace('[popup_data]',$templateData,$modalData);
+
+                // give id
+                // id is of form
+                // div__popup-data-[NAME OF FOOD]-[INDEX OF SELECT]
+                // remove non-alphanumeric chars
+                $strModifiedDesc = preg_replace('/(\W)+/','-',$arrUsdaData['description']);
+                
+                $modalData = str_replace('[id]','div__popup-data-'.$strModifiedDesc.'-'.$intCounter,$modalData);
+                // give carbs
+                $modalData = str_replace('[carbohydrate_amount]',$subElement['carb_amount'],$modalData);
+                $modalData = str_replace('[carbohydrate_unit]',$subElement['carb_unit'],$modalData);
+                // give energy
+                $modalData = str_replace('[kilocalorie_amount]',$subElement['energy_amount'],$modalData);
+                // give fat
+                $modalData = str_replace('[fat_amount]',$subElement['fat_amount'],$modalData);
+                $modalData = str_replace('[fat_unit]',$subElement['fat_unit'],$modalData);
+                // give protein
+                $modalData = str_replace('[protein_amount]',$subElement['protein_amount'],$modalData);
+                $modalData = str_replace('[protein_unit]',$subElement['protein_unit'],$modalData);
+                // give portion gram weight
+                $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
+                $modalData = str_replace('[serving_size_unit]',$subElement['serving_size_unit'],$modalData);
+
+                // append to modals
+                //
+                $strModalDatas .= $modalData;
+
+                // increment count
+                //
+                $intCounter = $intCounter +1;
+            }
+        }
+        // create the select
+        //
+        $strSelect = $this->strSelectToStr($arrSelectArgs);
+        
+        // put the select in the modal
+        //
+        $strModalHtml = str_replace('[select]',$strSelect,$strModalHtml);
+
+        // put the description in
+        //
+        $strModalHtml = str_replace('[description]',$arrUsdaData['description'],$strModalHtml);
+        // put the img in
+        //
+        $strModalHtml = str_replace('[img_src]',$arrUsdaData['img_src'],$strModalHtml);
+
+        // put the modal data in
+        //
+        $strModalHtml = str_replace('[popup_datas]',$strModalDatas,$strModalHtml);
+        return $strModalHtml;
+    }
 
     // Populates a select
     // input:

@@ -10,15 +10,6 @@ require_once('../funcs/str_replace_if_null.php');
 //
 require_once('../funcs/str_get_img_path.php');
 
-
-// data types
-// these are returned to javascript so that
-// we can know what type of data is returned
-//
-define('kDataTypeUsdaNonBranded','usda_non_branded');
-define('kDataTypeUsdaBranded','usda_branded');
-define('kDataTypeMenustat','menustat');
-
 class DBSearcher{
     // for connection to mysql
     //
@@ -44,18 +35,17 @@ class DBSearcher{
             from
                 menustat_single_rows 
             where
-                description = "'.$strFoodName.'"
+                description = ? 
             and
-                restaurant = "'.$strRestaurantName.'"
+                restaurant = ?
         ');
         // TO DO:
         // Dont know why bind_param is not working here.
         //
-        // $stmt->bind_param("ss",$strFoodName,$strRestaurantName);
+        $stmt->bind_param("ss",$strFoodName,$strRestaurantName);
         $stmt->execute();
         $result = $stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
-        $strNullReplacement = "Not present in db";
 
         $templateData = array(
             'data_type'=>kDataTypeMenustat,
@@ -66,13 +56,13 @@ class DBSearcher{
         
         foreach($data as $tableEntry){
             $arrSubEntry = array(
-                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],$strNullReplacement),
-                'serving_size_unit'=>strReplaceIfNull($tableEntry['serving_size_unit'],$strNullReplacement),
-                'serving_size_text'=>strReplaceIfNull($tableEntry['serving_size_text'],$strNullReplacement),
-                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],$strNullReplacement),
-                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],$strNullReplacement),
-                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],$strNullReplacement),
-                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],$strNullReplacement)
+                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],kNULL_REPLACEMENT),
+                'serving_size_unit'=>strReplaceIfNull($tableEntry['serving_size_unit'],kNULL_REPLACEMENT),
+                'serving_size_text'=>strReplaceIfNull($tableEntry['serving_size_text'],kNULL_REPLACEMENT),
+                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],kNULL_REPLACEMENT),
+                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],kNULL_REPLACEMENT),
+                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],kNULL_REPLACEMENT),
+                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],kNULL_REPLACEMENT)
             );
             // push template data
             //
@@ -119,7 +109,6 @@ class DBSearcher{
         $strServingSizeUnit = "";
         $strImgPath = "";
 
-        $strNullReplacement = "Not present in db";
         $intIndex = 0;
 
         $arrAllTemplateData = array();
@@ -127,8 +116,8 @@ class DBSearcher{
         foreach($data as $subArr){
             // perform checks for nulls here
             //
-            $strRestaurant = strReplaceIfNull($subArr['restaurant'],$strNullReplacement);
-            $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
+            $strRestaurant = strReplaceIfNull($subArr['restaurant'],kNULL_REPLACEMENT);
+            $strDescription= strReplaceIfNull($subArr['description'],kNULL_REPLACEMENT);
             $strImgPath = strGetImgPath($strDescription,$strRestaurant,kIMG_DIR.'/'.kMENUSTAT_IMGS);
 
             $templateData = array(
@@ -178,7 +167,6 @@ class DBSearcher{
 
         $strImgPath = "";
 
-        $strNullReplacement = "Not present in db";
         $intIndex = 0;
 
         $arrAllTemplateData = array();
@@ -186,10 +174,10 @@ class DBSearcher{
         foreach($data as $subArr){
             // perform checks for nulls here
             //
-            $strBrandOwner= strReplaceIfNull($subArr['brand_owner'],$strNullReplacement);
-            $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
+            $strBrandOwner= strReplaceIfNull($subArr['brand_owner'],kNULL_REPLACEMENT);
+            $strDescription= strReplaceIfNull($subArr['description'],kNULL_REPLACEMENT);
             $strImgPath = strGetImgPath($strDescription,$strBrandOwner,kIMG_DIR.'/'.kUSDA_BRANDED_IMGS);
-            $strFdcId= strReplaceIfNull($subArr['fdc_id'],$strNullReplacement);
+            $strFdcId= strReplaceIfNull($subArr['fdc_id'],kNULL_REPLACEMENT);
 
             $templateData = array(
                 "index" =>$intIndex,
@@ -236,7 +224,6 @@ class DBSearcher{
         $strImgPath = "";
         $strFdcId = "";
 
-        $strNullReplacement = "Not present in db";
         $intIndex = 0;
 
         $arrAllTemplateData = array();
@@ -244,8 +231,8 @@ class DBSearcher{
         foreach($data as $subArr){
             // perform checks for nulls here
             //
-            $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
-            $strFdcId= strReplaceIfNull($subArr['fdc_id'],$strNullReplacement);
+            $strDescription= strReplaceIfNull($subArr['description'],kNULL_REPLACEMENT);
+            $strFdcId= strReplaceIfNull($subArr['fdc_id'],kNULL_REPLACEMENT);
 
             // to do:
             // usda_non_branded has no restaurant / brand owner info, so the
@@ -281,72 +268,61 @@ class DBSearcher{
             select
                 *
             from
-                usda_branded 
+                usda_branded_single_rows
             where
-                fdc_id = '.$strFdcId.'
+                fdc_id = ?
         ');
-        // TO DO:
-        // Dont know why bind_param is not working here.
-        //
-        // $stmt->bind_param("ss",$strFoodName,$strRestaurantName);
+        $stmt->bind_param("i",$strFdcId);
         $stmt->execute();
         $result = $stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
-        $strNullReplacement = "Not present in db";
-
 
         $templateData = array(
             'fdc_id'=>$strFdcId,
         );
 
-        // get nutrients
+        // Note! 
+        // There may be multiple entries for each serving size
+        // thus we have an array of template data here
         //
-        $boolFirstLoop =TRUE;
-        foreach($data as $subArr){
-            if($boolFirstLoop){
-                // get servings
-                //
-                $strServingSize = strReplaceIfNull($subArr['serving_size'],$strNullReplacement);
-                $strServingSizeUnit = strReplaceIfNull($subArr['serving_size_unit'],$strNullReplacement);
-                $strDescription= strReplaceIfNull($subArr['description'],$strNullReplacement);
-                $strBrandOwner= strReplaceIfNull($subArr['brand_owner'],$strNullReplacement);
-                $strImgSrc = strGetImgPath($strDescription,$strBrandOwner,kIMG_DIR.'/'.kUSDA_BRANDED_IMGS);
-
-                $templateData['serving_size'] = $strServingSize;
-                $templateData['serving_size_unit'] = $strServingSizeUnit;
-                $templateData['description'] = $strDescription;
-                $templateData['brand_owner'] = $strBrandOwner;
-                $templateData['img_src'] = $strImgSrc;
-            }
-            // go thru the nutrients we want
-            // note that there are a total of 101 nutrients, we only need about 3
-            // Want carbs, fat, protein, energy
+        $templateData = array(
+            // return the datatype to js
+            'data_type'=>kDataTypeUsdaBranded,
+            'fdc_id'=>$strFdcId,
+        );
+        $boolFirstLoop = TRUE;
+        foreach($data as $tableEntry){
+            // get the description (only need to get once)
             //
-            switch($subArr['nutrient_name']){
-                case 'Energy':
-                    $templateData['energy'] = $subArr['nutrient_amount'];
-                    $templateData['energy_unit'] = $subArr['nutrient_unit'];
-                    break;
-                case 'Carbohydrate, by difference':
-                    $templateData['carbohydrate'] = $subArr['nutrient_amount'];
-                    $templateData['carbohydrate_unit'] = $subArr['nutrient_unit'];
-                    break;
-                case 'Total lipid (fat)':
-                    $templateData['fat'] = $subArr['nutrient_amount'];
-                    $templateData['fat_unit'] = $subArr['nutrient_unit'];
-                    break;
-                case 'Protein':
-                    $templateData['protein'] = $subArr['nutrient_amount'];
-                    $templateData['protein_unit'] = $subArr['nutrient_unit'];
-                    break;
+            if($boolFirstLoop){
+                $templateData['description'] = strReplaceIfNull($tableEntry['description'],kNULL_REPLACEMENT);
+                $templateData['img_src'] = strGetImgPath($templateData['description'],$tableEntry['brand_owner'],kIMG_DIR.'/'.kUSDA_BRANDED_IMGS);
+                $boolFirstLoop = FALSE;
             }
+
+            // likely have multiple table entries
+            //
+            $arrSubEntry = array(
+                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],kNULL_REPLACEMENT),
+                'serving_size_unit'=>strReplaceIfNull($tableEntry['serving_size_unit'],kNULL_REPLACEMENT),
+                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],kNULL_REPLACEMENT),
+                'protein_unit'=>strReplaceIfNull($tableEntry['protein_unit'],kNULL_REPLACEMENT),
+                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],kNULL_REPLACEMENT),
+                'energy_unit'=>strReplaceIfNull($tableEntry['energy_unit'],kNULL_REPLACEMENT),
+                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],kNULL_REPLACEMENT),
+                'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],kNULL_REPLACEMENT),
+                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],kNULL_REPLACEMENT),
+                'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],kNULL_REPLACEMENT),
+            );
+            // push to template data
+            //
+            array_push($templateData,$arrSubEntry);
         }
-        // get serving sizes
-        //
+
+
         $stmt->close();
 
         return $templateData;
-
     }
 
     // Queries the usda non branded db.
@@ -364,17 +340,15 @@ class DBSearcher{
             from
                 usda_non_branded_single_rows
             where
-                fdc_id = '.$strFdcId.' 
+                fdc_id = ? 
         ');
         // TO DO:
         // Dont know why bind_param is not working here.
         //
-        // $stmt->bind_param("ss",$strFoodName,$strRestaurantName);
+        $stmt->bind_param("i",$strFdcId);
         $stmt->execute();
         $result = $stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
-        $strNullReplacement = "Not present in db";
-
 
         // Note! 
         // There may be multiple entries for each serving size
@@ -390,7 +364,7 @@ class DBSearcher{
             // get the description (only need to get once)
             //
             if($boolFirstLoop){
-                $templateData['description'] = strReplaceIfNull($tableEntry['description'],$strNullReplacement);
+                $templateData['description'] = strReplaceIfNull($tableEntry['description'],kNULL_REPLACEMENT);
                 $templateData['img_src'] = strGetImgPathNoRestaurant($templateData['description'],kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
                 $boolFirstLoop = FALSE;
             }
@@ -398,16 +372,16 @@ class DBSearcher{
             // likely have multiple table entries
             //
             $arrSubEntry = array(
-                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],$strNullReplacement),
-                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],$strNullReplacement),
-                'protein_unit'=>strReplaceIfNull($tableEntry['protein_unit'],$strNullReplacement),
-                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],$strNullReplacement),
-                'energy_unit'=>strReplaceIfNull($tableEntry['energy_unit'],$strNullReplacement),
-                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],$strNullReplacement),
-                'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],$strNullReplacement),
-                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],$strNullReplacement),
-                'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],$strNullReplacement),
-                'serving_text'=>strReplaceIfNull($tableEntry['serving_text'],$strNullReplacement),
+                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],kNULL_REPLACEMENT),
+                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],kNULL_REPLACEMENT),
+                'protein_unit'=>strReplaceIfNull($tableEntry['protein_unit'],kNULL_REPLACEMENT),
+                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],kNULL_REPLACEMENT),
+                'energy_unit'=>strReplaceIfNull($tableEntry['energy_unit'],kNULL_REPLACEMENT),
+                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],kNULL_REPLACEMENT),
+                'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],kNULL_REPLACEMENT),
+                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],kNULL_REPLACEMENT),
+                'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],kNULL_REPLACEMENT),
+                'serving_text'=>strReplaceIfNull($tableEntry['serving_text'],kNULL_REPLACEMENT),
             );
             // push to template data
             //
