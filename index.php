@@ -87,7 +87,7 @@
                 </h4>
                 <hr>
                 <div id = "div__saved-food-container"
-                style="overflow-y:scroll;height:15rem;"
+                style="overflow-y:scroll;max-height:15rem;"
                 >
 
                 </div>
@@ -132,6 +132,9 @@
 <!-- 
     For hidden branded entry
  -->
+ <?php
+    include('templates/usda_branded/saved_entry.html');
+ ?>
 
 <!-- 
     For hidden non-branded entry
@@ -239,7 +242,42 @@
                 }
             });
         }else if(strDataType == 'usda_branded'){
+            // get the div
+            let divSavedEntry = $('#div__hidden-saved-entry-usda_branded').clone();
+            // remove id
+            divSavedEntry.attr('id','');
+            // get info
+            $.each((modalModal).find('.div__popup-data'),function(index,element){
+                // get element that is visible
+                if($(element).css('display')!='none'){
+                    // get info from element
+                    //
+                    let strBrandOwner = $(element).find('.span__brand-owner').first().text();
+                    let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
+                    let strServingSize = $(element).find('.span__serving-size').first().text();
+                    // put in info into saved entry
+                    //
+                    divSavedEntry.find('.span__description').first().text(strFoodName);
+                    divSavedEntry.find('.span__kilocalories').first().text(strKcals);
+                    divSavedEntry.find('.span__serving-size').first().text(strServingSize);
+                    divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
+                    divSavedEntry.find('.span__brand-owner').first().text(strBrandOwner);
 
+
+                    // make visible
+                    //
+                    divSavedEntry.css('display','');
+                    // give a remove feature
+                    //
+                    divSavedEntry.find('.svg__x-clicker').first().click(()=>{
+                        divSavedEntry.remove();
+                    });
+
+                    // append
+                    //
+                    $('#div__saved-food-container').append(divSavedEntry);
+                }
+            });
         }else{
             console.log('error: addToSavedClick\ninvalid database type');
         }

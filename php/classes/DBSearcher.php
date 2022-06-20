@@ -297,6 +297,7 @@ class DBSearcher{
             if($boolFirstLoop){
                 $templateData['description'] = strReplaceIfNull($tableEntry['description'],kNULL_REPLACEMENT);
                 $templateData['img_src'] = strGetImgPath($templateData['description'],$tableEntry['brand_owner'],kIMG_DIR.'/'.kUSDA_BRANDED_IMGS);
+                $templateData['brand_owner']=strReplaceIfNull($tableEntry['brand_owner'],kNULL_REPLACEMENT);
                 $boolFirstLoop = FALSE;
             }
 

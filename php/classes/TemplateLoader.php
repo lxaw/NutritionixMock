@@ -136,7 +136,6 @@ class TemplateLoader{
                 $modalData = str_replace('[protein_unit]',$subElement['protein_unit'],$modalData);
                 // give portion gram weight
                 $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
-
                 // append to modals
                 //
                 $strModalDatas .= $modalData;
@@ -371,7 +370,7 @@ class TemplateLoader{
 
                 // get the template for the data
                 //
-                $templateData = file_get_contents('../../templates/usda_non_branded/popup_data.html');
+                $templateData = file_get_contents('../../templates/usda_branded/popup_data.html');
                 
                 // populate modal
                 //
@@ -399,6 +398,9 @@ class TemplateLoader{
                 // give portion gram weight
                 $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
                 $modalData = str_replace('[serving_size_unit]',$subElement['serving_size_unit'],$modalData);
+
+                // give brand owner
+                $modalData = str_replace('[brand_owner]',$arrUsdaData['brand_owner'],$modalData);
 
                 // append to modals
                 //
