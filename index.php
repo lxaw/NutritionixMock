@@ -122,7 +122,7 @@
     For hidden menustat entry
 -->
 <?php
-    include('templates/menustat/menustat_saved_entry.html');
+    include('templates/menustat/saved_entry.html');
 ?>
 
 <!-- 
@@ -133,7 +133,7 @@
     For hidden non-branded entry
  -->
 <?php
-    include('templates/usda_non_branded/usda_non_branded_saved_entry.html');
+    include('templates/usda_non_branded/saved_entry.html');
 ?>
 
 
@@ -157,73 +157,87 @@
     function addToSavedClick(strDataType,modalModal){
         // depending on data type, change how saved info looks
         //
-
         // get name of food 
         let strFoodName = $(modalModal).find('.span__description').first().text();
         // get img src
         let strImgSrc = $(modalModal).find('.img__food-img').first().attr('src');
-
-        // $.ajax({
-        //     url:'php/funcs/query_save.php',
-        //     type:'GET',
-        //     dataType:'html',
-        //     data:{
-        //         strFoodName:strFoodName,
-        //         strDataType:strDataType
-        //     }
-        // });
-
         
-        switch(strDataType){
-            // we need to get the info from the modal
-            // and put it in the saved entry
-            //
-            
-            case 'usda_non-branded':
-                let divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
-                // remove id
-                divSavedEntry.attr('id','');
+        if(strDataType == 'usda_non-branded'){
+            let divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
+            // remove id
+            divSavedEntry.attr('id','');
 
-                // get info
+            // get info
 
-                $.each((modalModal).find('.div__popup-data'),function(index,element){
-                    // get element that is visible
-                    if($(element).css('display') != 'none'){
-                        // get info from element
-                        //
-                        let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
-                        let strServingSize = $(element).find('.span__serving-size').first().text();
-                        // put in info into saved entry
-                        //
-                        divSavedEntry.find('.span__description').first().text(strFoodName);
-                        divSavedEntry.find('.span__kilocalories').first().text(strKcals);
-                        divSavedEntry.find('.span__serving-size').first().text(strServingSize);
-                        divSavedEntry.find('.img__food-img').first().attr('src',strImgSrc);
+            $.each((modalModal).find('.div__popup-data'),function(index,element){
+                // get element that is visible
+                if($(element).css('display') != 'none'){
+                    // get info from element
+                    //
+                    let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
+                    let strServingSize = $(element).find('.span__serving-size').first().text();
+                    // put in info into saved entry
+                    //
+                    divSavedEntry.find('.span__description').first().text(strFoodName);
+                    divSavedEntry.find('.span__kilocalories').first().text(strKcals);
+                    divSavedEntry.find('.span__serving-size').first().text(strServingSize);
+                    divSavedEntry.find('.img__food-img').first().attr('src',strImgSrc);
 
-                        // make visible
-                        //
-                        divSavedEntry.css('display','');
-                        // give a remove feature
-                        //
-                        divSavedEntry.find('.svg__x-clicker').first().click(()=>{
-                            divSavedEntry.remove();
-                        });
+                    // make visible
+                    //
+                    divSavedEntry.css('display','');
+                    // give a remove feature
+                    //
+                    divSavedEntry.find('.svg__x-clicker').first().click(()=>{
+                        divSavedEntry.remove();
+                    });
 
-                        // append
-                        //
-                        $('#div__saved-food-container').append(divSavedEntry);
-                    }
-                });
+                    // append
+                    //
+                    $('#div__saved-food-container').append(divSavedEntry);
+                }
+            });
+        }else if(strDataType == 'menustat'){
+            // get the div
+            let divSavedEntry = $('#div__hidden-saved-entry-menustat').clone();
+            // remove id
+            divSavedEntry.attr('id','');
+            // get info
+            $.each((modalModal).find('.div__popup-data'),function(index,element){
+                // get element that is visible
+                if($(element).css('display')!='none'){
+                    // get info from element
+                    //
+                    let strRestaurant = $(element).find('.span__restaurant').first().text();
+                    let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
+                    let strServingSize = $(element).find('.span__serving-size').first().text();
+                    // put in info into saved entry
+                    //
+                    divSavedEntry.find('.span__description').first().text(strFoodName);
+                    divSavedEntry.find('.span__kilocalories').first().text(strKcals);
+                    divSavedEntry.find('.span__serving-size').first().text(strServingSize);
+                    divSavedEntry.find('.img__food-img').first().attr('src',strImgSrc);
+                    divSavedEntry.find('.span__restaurant').first().text(strRestaurant);
 
-                break;
-            case 'usda_branded':
-                break;
-            case 'menustat':
-                break;
-            default:
-                // incorrect datatype, do nothing
-                console.log('error: addToSavedClick\ninvalid datatype');
-                break;
+
+                    // make visible
+                    //
+                    divSavedEntry.css('display','');
+                    // give a remove feature
+                    //
+                    divSavedEntry.find('.svg__x-clicker').first().click(()=>{
+                        divSavedEntry.remove();
+                    });
+
+                    // append
+                    //
+                    $('#div__saved-food-container').append(divSavedEntry);
+                }
+            });
+        }else if(strDataType == 'usda_branded'){
+
+        }else{
+            console.log('error: addToSavedClick\ninvalid database type');
         }
     }
 
@@ -288,7 +302,7 @@
                 //
 
                 // sanity check
-                // console.log(data);
+                console.log(data);
                 let arrData = JSON.parse(data);
 
 

@@ -1,4 +1,10 @@
 <?php
+// Written by Lex Whalen
+
+// This function queries the respective databases for
+// information on foods.
+// Note that each database has slightly different
+// fields, so not all fields can be the same here.
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -36,10 +42,21 @@ if(
 
             // load the data into html
             //
-            $tempBody = $templateLoader->strTemplateToStr($arrTemplateData,'../templates/menustat/modal_popup.php');
+
+            $strModal = $templateLoader->strPopulateMenustatModal($arrTemplateData);
             // echo the html
             //
-            echo($tempBody);
+            // return both the datatype and the templates
+            //
+            $arrRet = array(
+                'data_type'=>$arrTemplateData['data_type'],
+                // 'templates'=>$tempBody
+                'modal'=>$strModal
+            );
+
+            // echo the html
+            //
+            echo(json_encode($arrRet));
             break;
         case "usda_branded":
             $arrTemplateData = $dbSearcher->arrQueryUSDABrandedDetail($_GET['strFdcId']);

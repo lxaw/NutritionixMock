@@ -58,34 +58,29 @@ class DBSearcher{
         $strNullReplacement = "Not present in db";
 
         $templateData = array(
+            'data_type'=>kDataTypeMenustat,
             'description'=>$strFoodName,
             'restaurant'=>$strRestaurantName,
-            'kcals'=>'',
-            'protein'=>'',
-            'carbs'=>'',
-            'fat'=>'',
-            'serving_size'=>'',
-            'serving_size_unit'=>'',
             'img_src'=>strGetImgPath($strFoodName,$strRestaurantName,kIMG_DIR.'/'.kMENUSTAT_IMGS)
         );
         
-
-        // should only provide one entry, thus loop only once
-        //
-        foreach($data as $subArr){
-            $templateData['serving_size'] = strReplaceIfNull($subArr['serving_size'],$strNullReplacement);
-            $templateData['serving_size_unit'] =  strReplaceIfNull($subArr['serving_size_unit'],$strNullReplacement);
-            $templateData['energy_amount']= strReplaceIfNull($subArr['energy_amount'],$strNullReplacement);
-            $templateData['protein_amount'] = strReplaceIfNull($subArr['protein_amount'],$strNullReplacement);
-            $templateData['fat_amount'] = strReplaceIfNull($subArr['fat_amount'],$strNullReplacement);
-            $templateData['carb_amount'] = strReplaceIfNull($subArr['carb_amount'],$strNullReplacement);
+        foreach($data as $tableEntry){
+            $arrSubEntry = array(
+                'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],$strNullReplacement),
+                'serving_size_unit'=>strReplaceIfNull($tableEntry['serving_size_unit'],$strNullReplacement),
+                'serving_size_text'=>strReplaceIfNull($tableEntry['serving_size_text'],$strNullReplacement),
+                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],$strNullReplacement),
+                'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],$strNullReplacement),
+                'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],$strNullReplacement),
+                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],$strNullReplacement)
+            );
+            // push template data
+            //
+            array_push($templateData,$arrSubEntry);
         }
-        // get serving sizes
-        //
 
         $stmt->close();
         return $templateData;
-
     }
 
     // queries the menustat db for names 
@@ -397,7 +392,6 @@ class DBSearcher{
             if($boolFirstLoop){
                 $templateData['description'] = strReplaceIfNull($tableEntry['description'],$strNullReplacement);
                 $templateData['img_src'] = strGetImgPathNoRestaurant($templateData['description'],kIMG_DIR.'/'.kUSDA_NON_BRANDED_IMGS);
-                $templateData['searchable_name'] = preg_replace('/[\W]/','-',$templateData['description']);
                 $boolFirstLoop = FALSE;
             }
 
