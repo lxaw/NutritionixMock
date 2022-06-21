@@ -9,8 +9,11 @@
     <!-- jquery -->
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <!-- bootstrap -->
-    <!-- CSS only -->
     <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+
     <title>Nutritionix Mock Demo</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
@@ -24,15 +27,15 @@
 </head>
 <body>
     <br>
-        <div class = 'container'>
+        <div class = 'container shadow' style='height:50rem'>
             <div class = 'row'>
                 <div class = 'col-8'>
                     <small>
                         Food Name
                     </small>
                     <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" id='svg__clockwise-clicker' viewBox="0 0 16 16">
+                        <span class="input-group-text" id ="span__svg-clicker-holder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
                                 <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
                             </svg>
@@ -73,8 +76,8 @@
                     Results for 
                     <strong><span id = "span__food-query">...</span></strong>
                 </h4>
-                <div class ='rounded' 
-                    style='overflow-y:auto;height:15rem;'
+                <div class ='rounded'
+                    style='overflow-y:auto;max-height:15rem;'
                     id = 'div__table-holder'
                 >
                     <table class = 'table table-hover' id = "table__food-search"
@@ -106,7 +109,37 @@
                     0
                 </span>
             </div>
+            <div class = 'd-flex justify-content-end'>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Submit
+                </button>
+
+
+            </div>
         </div> 
+<!-- 
+    Modal 
+    TO DO: only really need one modal here, just keep swapping out things
+-->
+<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Food Submission</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;max-height:6rem">
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+    </div>
+</div>
+</div> -->
+
 <!--  
     For modal
 -->
@@ -134,6 +167,7 @@
 <?php
     include('templates/usda_non_branded/saved_entry.html');
 ?>
+
 
 
 </body>
@@ -167,9 +201,11 @@
         let strFoodName = $(modalModal).find('.span__description').first().text();
         // get img src
         let strImgSrc = $(modalModal).find('.img__food-img').first().attr('src');
+        // for saved entry
+        let divSavedEntry = ""
         
         if(strDataType == 'usda_non-branded'){
-            let divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
+            divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
             // remove id
             divSavedEntry.attr('id','');
 
@@ -185,27 +221,14 @@
                     // put in info into saved entry
                     //
                     divSavedEntry.find('.span__description').first().text(strFoodName);
-                    divSavedEntry.find('.span__kilocalories').first().text(strKcals);
+                    divSavedEntry.find('.span__kilocalories').text(strKcals);
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
-
-                    // make visible
-                    //
-                    divSavedEntry.css('display','');
-                    // give a remove feature
-                    //
-                    divSavedEntry.find('.svg__x-clicker').first().click(()=>{
-                        divSavedEntry.remove();
-                    });
-
-                    // append
-                    //
-                    $('#div__saved-food-container').append(divSavedEntry);
                 }
             });
         }else if(strDataType == 'menustat'){
             // get the div
-            let divSavedEntry = $('#div__hidden-saved-entry-menustat').clone();
+            divSavedEntry = $('#div__hidden-saved-entry-menustat').clone();
             // remove id
             divSavedEntry.attr('id','');
             // get info
@@ -220,29 +243,15 @@
                     // put in info into saved entry
                     //
                     divSavedEntry.find('.span__description').first().text(strFoodName);
-                    divSavedEntry.find('.span__kilocalories').first().text(strKcals);
+                    divSavedEntry.find('.span__kilocalories').text(strKcals);
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     divSavedEntry.find('.span__restaurant').first().text(strRestaurant);
-
-
-                    // make visible
-                    //
-                    divSavedEntry.css('display','');
-                    // give a remove feature
-                    //
-                    divSavedEntry.find('.svg__x-clicker').first().click(()=>{
-                        divSavedEntry.remove();
-                    });
-
-                    // append
-                    //
-                    $('#div__saved-food-container').append(divSavedEntry);
                 }
             });
         }else if(strDataType == 'usda_branded'){
             // get the div
-            let divSavedEntry = $('#div__hidden-saved-entry-usda_branded').clone();
+            divSavedEntry = $('#div__hidden-saved-entry-usda_branded').clone();
             // remove id
             divSavedEntry.attr('id','');
             // get info
@@ -257,34 +266,42 @@
                     // put in info into saved entry
                     //
                     divSavedEntry.find('.span__description').first().text(strFoodName);
-                    divSavedEntry.find('.span__kilocalories').first().text(strKcals);
+                    divSavedEntry.find('.span__kilocalories').text(strKcals);
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     divSavedEntry.find('.span__brand-owner').first().text(strBrandOwner);
-
-
-                    // make visible
-                    //
-                    divSavedEntry.css('display','');
-                    // give a remove feature
-                    //
-                    divSavedEntry.find('.svg__x-clicker').first().click(()=>{
-                        divSavedEntry.remove();
-                    });
-
-                    // append
-                    //
-                    $('#div__saved-food-container').append(divSavedEntry);
                 }
             });
         }else{
-            console.log('error: addToSavedClick\ninvalid database type');
+            console.log('saved entry: invalid db type');
+            return;
         }
+        // make visible
+        //
+        divSavedEntry.css('display','');
+        // give a remove feature
+        //
+        divSavedEntry.find('.svg__x-clicker').first().click(()=>{
+            divSavedEntry.remove();
+        });
+        // when update Qty update kcal amount
+        //
+        divSavedEntry.find('.input__saved-entry-qty').first().change(()=>{
+            // get original kcal amount
+            let floatOriginalKcals = parseInt(divSavedEntry.find('.span__hidden-kilocalories').first().text());
+            // mulptiply it by the current value of input
+            let intMultiplier = parseInt(divSavedEntry.find('.input__saved-entry-qty').first().val());
+            // update kcal count
+            divSavedEntry.find('.span__kilocalories').first().text(floatOriginalKcals * intMultiplier);
+        })
+            
+        // append to saved
+        $('#div__saved-food-container').append(divSavedEntry);
     }
 
     // on click clockwise clicker query
     //
-    $('#svg__clockwise-clicker').click(()=>{
+    $('#span__svg-clicker-holder').click(()=>{
         voidQueryNamesInitial();
     })
 

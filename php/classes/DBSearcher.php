@@ -39,9 +39,6 @@ class DBSearcher{
             and
                 restaurant = ?
         ');
-        // TO DO:
-        // Dont know why bind_param is not working here.
-        //
         $stmt->bind_param("ss",$strFoodName,$strRestaurantName);
         $stmt->execute();
         $result = $stmt->get_result();
