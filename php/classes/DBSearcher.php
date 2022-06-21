@@ -78,7 +78,7 @@ class DBSearcher{
     // str name of food
     // output
     // array of food names with their respective restaurants
-    function arrQueryMenustatNames($strQuery){
+    function arrQueryMenustatNames($strQuery,$intOffset){
         // TO DO:
         // Use smarter querying
         //
@@ -94,10 +94,12 @@ class DBSearcher{
                 description like
                     ?
             limit
-                '.kENTRIES_PER_PAGE
-        );
+                '.kENTRIES_PER_PAGE.'
+            offset
+                ?
+        ');
 
-        $stmt->bind_param("s",$strFormattedQuery);
+        $stmt->bind_param("si",$strFormattedQuery,$intOffset);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -109,7 +111,8 @@ class DBSearcher{
         $strServingSizeUnit = "";
         $strImgPath = "";
 
-        $intIndex = 0;
+        // start the index off at the offset value
+        $intIndex = $intOffset;
 
         $arrAllTemplateData = array();
 
@@ -135,7 +138,7 @@ class DBSearcher{
         return $arrAllTemplateData;
     }
 
-    function arrQueryUSDABrandedNames($strQuery){
+    function arrQueryUSDABrandedNames($strQuery,$intOffset){
         // TO DO:
         // Use smarter querying
         //
@@ -151,10 +154,12 @@ class DBSearcher{
                 description like
                     ?
             limit
-                20'
-        );
+                '.kENTRIES_PER_PAGE.'
+            offset
+                ?    
+        ');
 
-        $stmt->bind_param("s",$strFormattedQuery);
+        $stmt->bind_param("si",$strFormattedQuery,$intOffset);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -165,7 +170,8 @@ class DBSearcher{
 
         $strImgPath = "";
 
-        $intIndex = 0;
+        // start the index off at the offset value
+        $intIndex = $intOffset;
 
         $arrAllTemplateData = array();
 
@@ -193,7 +199,7 @@ class DBSearcher{
         return $arrAllTemplateData;
     }
 
-    function arrQueryUSDANonBrandedNames($strQuery){
+    function arrQueryUSDANonBrandedNames($strQuery,$intOffset){
         // TO DO:
         // Use smarter querying
         //
@@ -209,10 +215,12 @@ class DBSearcher{
                 description like
                     ?
             limit
-                '.kENTRIES_PER_PAGE
-        );
+                '.kENTRIES_PER_PAGE.'
+            offset
+                ?
+        ');
 
-        $stmt->bind_param("s",$strFormattedQuery);
+        $stmt->bind_param("si",$strFormattedQuery,$intOffset);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -222,7 +230,8 @@ class DBSearcher{
         $strImgPath = "";
         $strFdcId = "";
 
-        $intIndex = 0;
+        // start the index at the offset value
+        $intIndex = $intOffset;
 
         $arrAllTemplateData = array();
 

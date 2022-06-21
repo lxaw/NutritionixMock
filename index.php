@@ -25,25 +25,24 @@
 <body>
     <br>
         <div class = 'container'>
-            <div>
-                <small>
-                    Food Name
-                </small>
-                <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" id='svg__clockwise-clicker' viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
-                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
-                        </svg>
-                    </span>
-                    <input id = "input__food-info" 
-                    placeholder = 'type at least 3 characters'
-                    class = 'form-control' > 
-                </div>
-            </div>
-            <br>
             <div class = 'row'>
-                <div class = 'col-6'>
+                <div class = 'col-8'>
+                    <small>
+                        Food Name
+                    </small>
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" id='svg__clockwise-clicker' viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
+                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
+                            </svg>
+                        </span>
+                        <input id = "input___food-name" 
+                        placeholder = 'type at least 3 characters'
+                        class = 'form-control' > 
+                    </div>
+                </div>
+                <div class = 'col-4'>
                     <small>
                         Database Type
                     </small>
@@ -98,12 +97,14 @@
                 <h4>
                     Stored Foods
                 </h4>
-                <hr>
                 <div id = "div__saved-food-container"
                 style="overflow-y:scroll;max-height:15rem;"
                 >
 
                 </div>
+                <span id = 'span__hidden-offset' style='display:none'>
+                    0
+                </span>
             </div>
         </div> 
 <!--  
@@ -284,25 +285,25 @@
     // on click clockwise clicker query
     //
     $('#svg__clockwise-clicker').click(()=>{
-        queryNames();
+        voidQueryNamesInitial();
     })
 
     // on keyup query db
     //
-    $("#input__food-info").keyup(debounce( ()=>{
-            queryNames();
+    $("#input___food-name").keyup(debounce( ()=>{
+            voidQueryNamesInitial();
         },1000
     ));
 
     // on change of select query db
     //
     $("#select__db-options").change(()=>{
-        queryNames();
+        voidQueryNamesInitial();
     })
     // on change of select query db 
     //
     $("#input__per-page").change(()=>{
-        queryNames();
+        voidQueryNamesInitial();
     })
 
 
@@ -394,46 +395,32 @@
         })
     }
 
-    // if scroll to end of div give more results
-    //
-    function scrollMore(){
-        $('#div__table-holder').scroll(()=>{
-            var divTableHolder = $('#div__table-holder');
-            var intScrollH = divTableHolder.prop('scrollHeight');
-            console.log(intScrollH);
-            var intDivHeight = divTableHolder.height();
-            var intScrollerEndPoint = intScrollH - intDivHeight;
-            var intDivScrollerTop = divTableHolder.scrollTop();
-            if(intDivScrollerTop === intScrollerEndPoint){
-                // query more
-                //
-                console.log('end of scroll');
-            }
-        })
-    }
 
     // get names from db
+    // this is the initial query, so no consideration of
+    // scroll
     //
-    function queryNames(){
+    function voidQueryNamesInitial(){
         // get name of food
         //
-        var strFoodQuery = $("#input__food-info").val();
+        var strFoodQuery = $("#input___food-name").val();
         // if less than 3 chars, don't do anything
         //
+
         if(strFoodQuery.length < 3){
             return;
         }
+        // reset scroll position
+        //
+        $('#div__table-holder').scrollTop(0);
+
+        // reset the hidden offset
+        //
+        $('#span__hidden-offset').text(0);
 
         // update the name of the query
         //
         $("#span__food-query").text(strFoodQuery!="" ? strFoodQuery : "...");
-
-        // if no food query, don't do anything
-        if(strFoodQuery == ""){
-            // clear the results
-            $("#div__results-container").html("");
-            return;
-        }
 
         // query the db based on if menustat, branded usda, or reg usda selected
         //
@@ -441,24 +428,11 @@
 
         console.log('querying db: ' + strDBType + ' for ' + strFoodQuery);
 
-        $.ajax({
-            url: "php/funcs/query_names.php",
-            type:'GET',
-            dataType:'html',
-            data:{
-                strQuery:strFoodQuery,
-                strDBType:strDBType,
-            },
-            success:function(data){
-                // writes data to results div
-                //
-                $("#div__results-container").html(data);
+        $.when(ajaxGetFoodSearchResults(strFoodQuery,strDBType,0)).done(
+            function(arrFoods, textStatus, jqXHR){
+                $('#div__results-container').html(arrFoods);
             }
-        }).done(function(response){
-            console.log('success');
-        }).fail(function(response){
-            console.log('fail');
-        })
+        )
     };
 
     // get names from db
@@ -468,7 +442,7 @@
     // intOffset is the offset value for mysql.
     // this function is used to query regular entries and 
     // also when scrolling
-    function arrQueryNames(strFoodName,strDBType,intOffset){
+    function ajaxGetFoodSearchResults(strFoodName,strDBType,intOffset){
         console.log('querying: '+ strDBType + ' for ' + strFoodName);
 
         return $.ajax({
@@ -479,6 +453,53 @@
                 strQuery:strFoodName,
                 strDBType:strDBType,
                 intOffset:intOffset
+            },
+            success:function(data){
+                // return the data
+                //
+                return data;
+            }
+        }).done((response)=>{
+            console.log('success');
+        }).fail((response)=>{
+            console.log('fail');
+        })
+    }
+
+    // if scroll to end of div give more results
+    //
+    function scrollMore(){
+        $('#div__table-holder').scroll(()=>{
+            var divTableHolder = $('#div__table-holder');
+            var intScrollH = divTableHolder.prop('scrollHeight');
+            var intDivHeight = divTableHolder.height();
+            var intScrollerEndPoint = intScrollH - intDivHeight;
+            var intDivScrollerTop = divTableHolder.scrollTop();
+
+            if(intDivScrollerTop === intScrollerEndPoint){
+                // query more
+                //
+                // get food name, db type, offset amount
+                //
+                var strFoodName = $('#input___food-name').val();
+                var strDBType = $('#select__db-options').val();
+                // TO DO:
+                // make a constant value for the offset
+                // this 20 comes from db_config.php
+                //
+                var intNewOffset= parseInt($('#span__hidden-offset').text()) + 20;
+                // need to update the offset
+                $('#span__hidden-offset').text(intNewOffset);
+                // console.log('old offset: '$(''))
+
+                console.log('end of scroll');
+                $.when(ajaxGetFoodSearchResults(strFoodName, strDBType,intNewOffset)).done(
+                    function(arrFoods,textStatus,jqXHR){
+                        // append the data
+                        //
+                        $('#div__results-container').append(arrFoods);
+                    }
+                )
             }
         })
     }
