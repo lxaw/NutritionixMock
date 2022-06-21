@@ -7,3 +7,13 @@ styles for saved entry
 .p__saved-entry-text{
     font-size:0.75rem;
 }
+
+/* 
+styles for scroll search
+*/
+.img__search-result{
+    height:3rem;
+}
+.p__search-result-text{
+    font-size:0.75rem;
+}

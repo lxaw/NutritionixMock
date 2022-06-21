@@ -1,17 +1,18 @@
 <tr class = "tr__food-result-entry" onclick="displayMore(this)" data-description="[description]" data-restaurant="[restaurant]" data-img-path ='[img_path]' data-fdc-id="[fdc_id]">
     <th scope = "row">[index]</th>
     <td>
-        <p>
+        <p class = 'p__search-result-text'>
             Brand Owner: [brand_owner]
         </p>
-        <p>
+        <p class = 'p__search-result-text'>
             Description: [description]
         </p>
-        <p>
+        <p class = 'p__search-result-text'>
             fdc id: [fdc_id]
         </p>
     </td>
-    <td>
-            <img src = "[img_path]" alt = "img for [description]" class = "img-thumbnail">
+    <td class = 'text-center'>
+        <img src = "[img_path]" alt = "img for [description]" 
+        class = "img img__search-result">
     </td>
 </tr>

@@ -36,7 +36,9 @@
                             <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
                         </svg>
                     </span>
-                    <input id = "input__food-info" class = 'form-control' > 
+                    <input id = "input__food-info" 
+                    placeholder = 'type at least 3 characters'
+                    class = 'form-control' > 
                 </div>
             </div>
             <br>
@@ -64,20 +66,31 @@
                     </select>
                 </div>
                 <div class = 'col-6'>
-                    <small>
-                        Entries per page
-                    </small>
-                    <select class = 'form-select' id = "input__per-page">
-                        <option selected value = "5">
-                            5
-                        </option>
-                        <option value = "10">
-                            10
-                        </option>
-                        <option value = "20">
-                            20
-                        </option>
-                    </select>
+                </div>
+            </div>
+            <br>
+            <div>
+                <h4>
+                    Results for 
+                    <strong><span id = "span__food-query">...</span></strong>
+                </h4>
+                <div class ='rounded' 
+                    style='overflow-y:auto;height:15rem;'
+                    id = 'div__table-holder'
+                >
+                    <table class = 'table table-hover' id = "table__food-search"
+                    >
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col" class = 'text-center'>Food Info</th>
+                                <th scope="col" class=  'text-center'>Food Image</th>
+                            </tr>
+                        </thead>
+                        <tbody id = "div__results-container">
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <br>
@@ -89,28 +102,6 @@
                 <div id = "div__saved-food-container"
                 style="overflow-y:scroll;max-height:15rem;"
                 >
-
-                </div>
-            </div>
-            <br>
-            <div>
-                <h4>
-                    Raw Results for 
-                    <strong><span id = "span__food-query">...</span></strong>
-                </h4>
-                <table class = 'table table-striped table-hover'>
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col" class = 'text-center'>Food Info</th>
-                            <th scope="col" class=  'text-center'>Food Image</th>
-                        </tr>
-                    </thead>
-                    <tbody id = "div__results-container">
-
-                    </tbody>
-                </table>
-                <div id = "div__search-index">
 
                 </div>
             </div>
@@ -148,6 +139,13 @@
 
 </html>
 <script>
+
+    // functions on start
+    //
+    $(document).ready(()=>{
+        scrollMore();
+    });
+
     // function to allow other function to 
     // be called after certain period of time
     // see:
@@ -396,15 +394,36 @@
         })
     }
 
+    // if scroll to end of div give more results
+    //
+    function scrollMore(){
+        $('#div__table-holder').scroll(()=>{
+            var divTableHolder = $('#div__table-holder');
+            var intScrollH = divTableHolder.prop('scrollHeight');
+            console.log(intScrollH);
+            var intDivHeight = divTableHolder.height();
+            var intScrollerEndPoint = intScrollH - intDivHeight;
+            var intDivScrollerTop = divTableHolder.scrollTop();
+            if(intDivScrollerTop === intScrollerEndPoint){
+                // query more
+                //
+                console.log('end of scroll');
+            }
+        })
+    }
+
     // get names from db
     //
     function queryNames(){
         // get name of food
         //
         var strFoodQuery = $("#input__food-info").val();
-        // get amount per page
+        // if less than 3 chars, don't do anything
         //
-        var intPerPage = $("#input__per-page").val();
+        if(strFoodQuery.length < 3){
+            return;
+        }
+
         // update the name of the query
         //
         $("#span__food-query").text(strFoodQuery!="" ? strFoodQuery : "...");
@@ -420,6 +439,8 @@
         //
         var strDBType = $("#select__db-options").val();
 
+        console.log('querying db: ' + strDBType + ' for ' + strFoodQuery);
+
         $.ajax({
             url: "php/funcs/query_names.php",
             type:'GET',
@@ -427,7 +448,6 @@
             data:{
                 strQuery:strFoodQuery,
                 strDBType:strDBType,
-                intPerPage:intPerPage
             },
             success:function(data){
                 // writes data to results div
@@ -440,5 +460,27 @@
             console.log('fail');
         })
     };
+
+    // get names from db
+    // input: intOffset
+    // output: array of table entries (html)
+    // desc:
+    // intOffset is the offset value for mysql.
+    // this function is used to query regular entries and 
+    // also when scrolling
+    function arrQueryNames(strFoodName,strDBType,intOffset){
+        console.log('querying: '+ strDBType + ' for ' + strFoodName);
+
+        return $.ajax({
+            url:'php/funcs/query_names.php',
+            type:'GET',
+            dataType:'html',
+            data:{
+                strQuery:strFoodName,
+                strDBType:strDBType,
+                intOffset:intOffset
+            }
+        })
+    }
 
 </script>

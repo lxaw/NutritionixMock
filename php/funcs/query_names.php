@@ -17,8 +17,6 @@ if(
     isset($_GET["strQuery"])
     &&
     isset($_GET['strDBType'])
-    &&
-    isset($_GET['intPerPage'])
     ){
     // for connect to db
     //
@@ -38,7 +36,7 @@ if(
 
         case "menustat":
 
-            $arrAllTemplateData = $dbSearcher->arrQueryMenustatNames($_GET['strQuery'],$_GET['intPerPage']);
+            $arrAllTemplateData = $dbSearcher->arrQueryMenustatNames($_GET['strQuery']);
 
             foreach($arrAllTemplateData as $subArr){
                 $tempBody = $templateLoader->strTemplateToStr($subArr,"../../templates/menustat/table_entry.html");
@@ -46,14 +44,14 @@ if(
             }
             break;
         case "usda_branded":
-            $arrAllTemplateData = $dbSearcher->arrQueryUSDABrandedNames($_GET['strQuery'],$_GET['intPerPage']);
+            $arrAllTemplateData = $dbSearcher->arrQueryUSDABrandedNames($_GET['strQuery']);
             foreach($arrAllTemplateData as $subArr){
                 $tempBody = $templateLoader->strTemplateToStr($subArr,'../../templates/usda_branded/table_entry.html');
                 echo($tempBody);
             }
             break;
         case "usda_non-branded":
-            $arrAllTemplateData = $dbSearcher->arrQueryUSDANonBrandedNames($_GET['strQuery'],$_GET['intPerPage']);
+            $arrAllTemplateData = $dbSearcher->arrQueryUSDANonBrandedNames($_GET['strQuery']);
             foreach($arrAllTemplateData as $subArr){
                 $tempBody = $templateLoader->strTemplateToStr($subArr,'../../templates/usda_non_branded/table_entry.html');
                 echo($tempBody);

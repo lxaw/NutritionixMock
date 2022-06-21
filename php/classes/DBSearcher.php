@@ -78,7 +78,7 @@ class DBSearcher{
     // str name of food
     // output
     // array of food names with their respective restaurants
-    function arrQueryMenustatNames($strQuery,$intPerPage){
+    function arrQueryMenustatNames($strQuery){
         // TO DO:
         // Use smarter querying
         //
@@ -94,10 +94,10 @@ class DBSearcher{
                 description like
                     ?
             limit
-                ?
-        ');
+                '.kENTRIES_PER_PAGE
+        );
 
-        $stmt->bind_param("si",$strFormattedQuery,$intPerPage);
+        $stmt->bind_param("s",$strFormattedQuery);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -141,8 +141,6 @@ class DBSearcher{
         //
         $strFormattedQuery = '%'.$strQuery.'%';
 
-        $intLimit = 5;
-
         // prepare sql statement
         $stmt = $this->_MySQLiConnection->mysqli()->prepare('
             select
@@ -153,10 +151,10 @@ class DBSearcher{
                 description like
                     ?
             limit
-                ?
-        ');
+                20'
+        );
 
-        $stmt->bind_param("si",$strFormattedQuery,$intLimit);
+        $stmt->bind_param("s",$strFormattedQuery);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
@@ -195,7 +193,7 @@ class DBSearcher{
         return $arrAllTemplateData;
     }
 
-    function arrQueryUSDANonBrandedNames($strQuery,$intPerPage){
+    function arrQueryUSDANonBrandedNames($strQuery){
         // TO DO:
         // Use smarter querying
         //
@@ -211,10 +209,10 @@ class DBSearcher{
                 description like
                     ?
             limit
-                ?
-        ');
+                '.kENTRIES_PER_PAGE
+        );
 
-        $stmt->bind_param("si",$strFormattedQuery,$intPerPage);
+        $stmt->bind_param("s",$strFormattedQuery);
         $stmt->execute();
         $result =$stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
