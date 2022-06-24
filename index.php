@@ -97,9 +97,18 @@
             </div>
             <br>
             <div>
-                <h4>
-                    Stored Foods
-                </h4>
+                <div class = 'd-flex justify-content-between'>
+                    <div>
+                        <h4>
+                            Stored Foods
+                        </h4>
+                    </div>
+                    <div>
+                        <h4>
+                            Total Kilocalories: <span id = "span__total-kcals" class = 'text-success'>0</span>
+                        </h4>
+                    </div>
+                </div>
                 <div id = "div__saved-food-container"
                 style="overflow-y:scroll;max-height:15rem;"
                 >
@@ -109,43 +118,7 @@
                     0
                 </span>
             </div>
-            <div class = 'd-flex justify-content-end'>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Submit
-                </button>
-
-
-            </div>
         </div> 
-<!-- 
-    Modal 
-    TO DO: only really need one modal here, just keep swapping out things
--->
-<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Food Submission</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body" style="overflow-y:auto;max-height:6rem">
-
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-    </div>
-    </div>
-</div>
-</div> -->
-
-<!--  
-    For modal
--->
-    <div id = "div__modal-holder">
-
-    </div>
 
 <!-- 
     For hidden menustat entry
@@ -171,6 +144,9 @@
 
 
 </body>
+<div id = "div__modal-holder">
+
+</div>
 
 </html>
 <script>
@@ -195,6 +171,7 @@
 
     // add to saved button //
     function addToSavedClick(strDataType,modalModal){
+        $(modalModal).modal('hide');
         // depending on data type, change how saved info looks
         //
         // get name of food 
@@ -224,6 +201,9 @@
                     divSavedEntry.find('.span__kilocalories').text(strKcals);
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
+                    // add the kcals to the total
+                    //
+                    addToTotalKcals(parseInt(strKcals));
                 }
             });
         }else if(strDataType == 'menustat'){
@@ -247,6 +227,9 @@
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     divSavedEntry.find('.span__restaurant').first().text(strRestaurant);
+                    // add the kcals to the total
+                    //
+                    addToTotalKcals(parseInt(strKcals));
                 }
             });
         }else if(strDataType == 'usda_branded'){
@@ -270,6 +253,9 @@
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     divSavedEntry.find('.span__brand-owner').first().text(strBrandOwner);
+                    // add the kcals to the total
+                    //
+                    addToTotalKcals(parseInt(strKcals));
                 }
             });
         }else{
@@ -282,17 +268,29 @@
         // give a remove feature
         //
         divSavedEntry.find('.svg__x-clicker').first().click(()=>{
+            // remove current kcals 
+            //
+            let intCurrentKcals = parseInt(divSavedEntry.find('.span__kilocalories').first().text());
+            addToTotalKcals(-1*intCurrentKcals);
             divSavedEntry.remove();
         });
         // when update Qty update kcal amount
         //
         divSavedEntry.find('.input__saved-entry-qty').first().change(()=>{
             // get original kcal amount
-            let floatOriginalKcals = parseInt(divSavedEntry.find('.span__hidden-kilocalories').first().text());
+            let intOriginalKcals = parseInt(divSavedEntry.find('.span__hidden-kilocalories').first().text());
+            // get current value
+            let intCurrentKcals = parseInt(divSavedEntry.find('.span__kilocalories').first().text());
+
             // mulptiply it by the current value of input
             let intMultiplier = parseInt(divSavedEntry.find('.input__saved-entry-qty').first().val());
-            // update kcal count
-            divSavedEntry.find('.span__kilocalories').first().text(floatOriginalKcals * intMultiplier);
+            // get new val
+            let intNewVal = intOriginalKcals * intMultiplier;
+            // update kcal count for individual entry
+            divSavedEntry.find('.span__kilocalories').first().text(intNewVal);
+            // update total kcal count by subtracting the current kcals and then adding the new
+            addToTotalKcals(-1*intCurrentKcals);
+            addToTotalKcals(intNewVal);
         })
             
         // append to saved
@@ -519,6 +517,16 @@
                 )
             }
         })
+    }
+
+    function addToTotalKcals(intVal){
+        // adds to span__total-kcals value
+        //
+        // get original value
+        let intOriginalValue = parseInt($("#span__total-kcals").text());
+        let intNewVal = intOriginalValue + intVal;
+        // set new val
+        $("#span__total-kcals").text(intNewVal);
     }
 
 </script>
