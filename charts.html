@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- custom styles -->
+    <link rel='stylesheet' href='./styles/styles.css' >
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <!-- bootstrap -->
+    <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <!-- chart.js -->
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
+  <title>Chart Mock</title>
+</head>
+<body>
+
+  <br>
+
+
+  <div class = 'container shadow'>
+    <div id = "div__title-section">
+      <h4 class = 'text-center'>
+        Macronutrient Intakes
+      </h4>
+    </div>
+
+    <br>
+    
+    <div id = "div__graph-container">
+      <div class = 'row'>
+        <div class= 'col-6'>
+          <div class = 'div__graph-section' id = "div__group-01">
+            <canvas id = "canvas__fat-totals"></canvas>
+            <canvas id = "canvas__calories-totals"></canvas>
+          </div>
+        </div>
+        <div class= 'col-6'>
+          <div class = 'div__graph-section' id = "div__group-02">
+            <canvas id = "canvas__potassium-totals"></canvas>
+            <canvas id = "canvas__fiber-totals"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class = 'btn btn-outline-warning' id = "btn__update-chart">
+      Add 20
+    </button>
+
+    <br>
+    <br>
+  </div>
+
+  <!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+</body>
+</html>
+
+<script>
+  var xValues = ["Total", "Used"];
+  var yValues = [100,0];
+  var barColors = [
+    "rgba(0,0,0,1)",
+    "rgba(0,255,0,1)",
+  ];
+  var chartFatTotals = new Chart('canvas__fat-totals',{
+    type:'doughnut',
+    data:{
+      labels:xValues,
+      datasets:[{
+        backgroundColor:barColors,
+        data:yValues
+      }]
+    },
+    options:{
+      title:{
+        display:true,
+        text:'Total Fat Intake'
+      }
+    }
+  })
+
+  // on clicker
+  $('#btn__update-chart').click(()=>{
+    updateChart();
+  })
+
+  function updateChart(){
+    // updates the chart by adding to first index
+    yValues[1] += 20;
+    yValues[0] -=20;
+    if(yValues[1] > 100){
+      // alert user
+      //
+      $('#exampleModal').modal('toggle')
+      // $('#exampleModal').find('button').click(()=>{$('#exampleModal').modal('toggle')})
+      return;
+    }
+    chartFatTotals.data.datasets[0].data = yValues
+    chartFatTotals.update()
+  }
+
+
+</script>

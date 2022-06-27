@@ -11,13 +11,11 @@
     <!-- bootstrap -->
     <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
 
     <title>Nutritionix Mock Demo</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <?php
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
@@ -118,6 +116,29 @@
                     0
                 </span>
             </div>
+            <div id = 'div__chart-holder'>
+                <div>
+                    <h4>
+                        Macronutrient Charts
+                    </h4>
+                </div>
+                <div class = 'div__chart-container'>
+                    <div class = 'row'>
+                        <div class = 'div__graph-section' id = 'div__group-01'>
+                            <div class = 'col-6'>
+                                <canvas id ='canvas__fat-totals'>
+
+                                </canvas>
+                            </div>
+                            <div class = 'col-6'>
+                                <canvas id ='canvas__calories-totals'>
+
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div> 
 
 <!-- 
@@ -150,7 +171,6 @@
 
 </html>
 <script>
-
     // functions on start
     //
     $(document).ready(()=>{
@@ -297,30 +317,6 @@
         $('#div__saved-food-container').append(divSavedEntry);
     }
 
-    // on click clockwise clicker query
-    //
-    $('#span__svg-clicker-holder').click(()=>{
-        voidQueryNamesInitial();
-    })
-
-    // on keyup query db
-    //
-    $("#input___food-name").keyup(debounce( ()=>{
-            voidQueryNamesInitial();
-        },1000
-    ));
-
-    // on change of select query db
-    //
-    $("#select__db-options").change(()=>{
-        voidQueryNamesInitial();
-    })
-    // on change of select query db 
-    //
-    $("#input__per-page").change(()=>{
-        voidQueryNamesInitial();
-    })
-
 
     /*
         Queries the db to provide more info on the food.
@@ -376,7 +372,8 @@
                 $("#div__modal-holder").html(strModal);
 
                 // show modal
-                $('#simpleModal').modal('show');
+                $('#simpleModal').modal('toggle');
+                $('#simpleModal').find('button').click(()=>{$('#simpleModal').modal('toggle')})
 
                 // add on select change feature
                 //
@@ -528,5 +525,34 @@
         // set new val
         $("#span__total-kcals").text(intNewVal);
     }
+
+    // on click clockwise clicker query
+    //
+    $('#span__svg-clicker-holder').click(()=>{
+        voidQueryNamesInitial();
+    })
+
+    // on keyup query db
+    //
+    $("#input___food-name").keyup(debounce( ()=>{
+            voidQueryNamesInitial();
+        },1000
+    ));
+
+    // on change of select query db
+    //
+    $("#select__db-options").change(()=>{
+        voidQueryNamesInitial();
+    })
+    // on change of select query db 
+    //
+    $("#input__per-page").change(()=>{
+        voidQueryNamesInitial();
+    })
+
+    // for graphs
+    var xFatLabel = ['Total Fat']
+    var yFatValues = []
+
 
 </script>
