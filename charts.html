@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- custom styles -->
-    <link rel='stylesheet' href='./styles/styles.css' >
+    <link rel='stylesheet' type='text/css' href='./styles/styles.css' >
     <!-- jquery -->
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <!-- bootstrap -->
@@ -20,49 +20,6 @@
   <title>Chart Mock</title>
 </head>
 <body>
-
-  <br>
-
-
-  <div class = 'container shadow'>
-    <div id = "div__title-section">
-      <h4 class = 'text-center'>
-        Macronutrient Intakes
-      </h4>
-    </div>
-
-    <br>
-    
-    <div id = "div__graph-container">
-      <div class = 'row'>
-        <div class= 'col-6'>
-          <div class = 'div__graph-section' id = "div__group-01">
-            <canvas id = "canvas__fat-totals"></canvas>
-            <canvas id = "canvas__calories-totals"></canvas>
-          </div>
-        </div>
-        <div class= 'col-6'>
-          <div class = 'div__graph-section' id = "div__group-02">
-            <canvas id = "canvas__potassium-totals"></canvas>
-            <canvas id = "canvas__fiber-totals"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class = 'btn btn-outline-warning' id = "btn__update-chart">
-      Add 20
-    </button>
-
-    <br>
-    <br>
-  </div>
-
-  <!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch demo modal
-</button> -->
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -74,7 +31,7 @@
         </button>
       </div>
       <div class="modal-body">
-        ...
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -84,52 +41,126 @@
   </div>
 </div>
 
-  
+  <br>
+
+  <div class = 'container shadow'>
+    <br>
+    <div id = "div__title-section">
+      <h4 class = 'text-center'>
+        Macronutrient Intake
+      </h4>
+    </div>
+
+    <br>
+    
+    <div id = "div__graph-container">
+      <div class = 'row'>
+        <div class= 'col-6'>
+          <div class = 'text-center
+          p-3 border border-dark rounded
+          ' 
+          >
+            <div class = 'chart-holder'>
+              <canvas class = 'canvas__chart' id = "canvas__fat-totals"></canvas>
+              <h2 class = 'h2__macro-nutrient-limit'>
+                100
+              </h2>
+            </div>
+            <br>
+            <button class = 'btn btn-outline-warning btn__update-chart' 
+            >
+              Add 20
+            </button>
+          </div>
+        </div>
+        <div class= 'col-6'>
+          <div class = 'div__graph-section text-center
+          p-3 border border-dark rounded
+          ' 
+          >
+            <div class = 'chart-holder'>
+              <canvas class = 'canvas__chart'
+              id = "canvas__calorie-totals"></canvas>
+              <h2 class = 'h2__macro-nutrient-limit'>
+                200
+              </h2>
+            </div>
+            <br>
+            <button class = 'btn btn-outline-warning btn__update-chart' 
+            >
+              Add 20
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <br>
+    <br>
+  </div>
+
 </body>
 </html>
 
 <script>
-  var xValues = ["Total", "Used"];
-  var yValues = [100,0];
-  var barColors = [
-    "rgba(0,0,0,1)",
-    "rgba(0,255,0,1)",
-  ];
-  var chartFatTotals = new Chart('canvas__fat-totals',{
-    type:'doughnut',
-    data:{
-      labels:xValues,
-      datasets:[{
-        backgroundColor:barColors,
-        data:yValues
-      }]
-    },
-    options:{
-      title:{
-        display:true,
-        text:'Total Fat Intake'
+
+  // modal
+  var modalModal = $('#exampleModal');
+
+  // set up for each button
+  $('.btn__update-chart').each((i,e)=>{
+    var hChanger = $(e).parent().find('.h2__macro-nutrient-limit').first();
+    var intLimit = parseInt(hChanger.text());
+    var strChartId = $(e).parent().find('.canvas__chart').first().attr('id');
+    var xValues = ['Remaining','Used'];
+    var yValues = [intLimit,0];
+    var barColors = [
+      'green','red'
+    ];
+    var chartChart = new Chart(strChartId,{
+      type:'doughnut',
+      data:{
+        labels:xValues,
+        datasets:[{
+          backgroundColor:barColors, 
+          data:yValues,
+          borderWidth:0,
+          hoverBorderWidth:0,
+        }]
+      },
+      options:{
+        title:{
+          display:true,
+          text:'Graph'
+        }
       }
-    }
-  })
+    });
+    // add on click
+    $(e).click(()=>{
+      updateChart(chartChart,intLimit,hChanger);
+    });
+  });
 
-  // on clicker
-  $('#btn__update-chart').click(()=>{
-    updateChart();
-  })
-
-  function updateChart(){
+  function updateChart(chartChart,intLimit,textChanger){
     // updates the chart by adding to first index
-    yValues[1] += 20;
-    yValues[0] -=20;
-    if(yValues[1] > 100){
+    var yValues = chartChart.data.datasets[0].data;
+    yValues[1] +=20
+    yValues[0] -=20
+    
+    if(yValues[1] > intLimit){
       // alert user
       //
-      $('#exampleModal').modal('toggle')
-      // $('#exampleModal').find('button').click(()=>{$('#exampleModal').modal('toggle')})
+      modalModal.modal('toggle');
+      modalModal.find('button').click(()=>{modalModal.modal('toggle')});
+      modalModal.find('.modal-body').first().text('All out!');
       return;
     }
-    chartFatTotals.data.datasets[0].data = yValues
-    chartFatTotals.update()
+    // update chart
+    chartChart.data.datasets[0].data = yValues
+    chartChart.update()
+    // update the text
+    textChanger.text(yValues[0]);
   }
 
 

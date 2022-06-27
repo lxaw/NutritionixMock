@@ -373,6 +373,7 @@
 
                 // show modal
                 $('#simpleModal').modal('toggle');
+                // fix modal not closing
                 $('#simpleModal').find('button').click(()=>{$('#simpleModal').modal('toggle')})
 
                 // add on select change feature

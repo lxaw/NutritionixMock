@@ -17,3 +17,16 @@ styles for scroll search
 .p__search-result-text{
     font-size:0.75rem;
 }
+
+/* 
+for charts 
+*/
+/* holder for charts */
+.chart-holder{
+    display:relative;
+}
+/* element on top */
+.chart-holder-center{
+    position:absolute;
+    color:red;
+}
