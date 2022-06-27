@@ -1,0 +1,32 @@
+/* 
+styles for saved entry 
+*/
+.img__saved-entry{
+    height:3rem;
+}
+.p__saved-entry-text{
+    font-size:0.75rem;
+}
+
+/* 
+styles for scroll search
+*/
+.img__search-result{
+    height:3rem;
+}
+.p__search-result-text{
+    font-size:0.75rem;
+}
+
+/* 
+for charts 
+*/
+/* holder for charts */
+.chart-holder{
+    display:relative;
+}
+/* element on top */
+.chart-holder-center{
+    position:absolute;
+    color:red;
+}
