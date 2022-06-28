@@ -80,7 +80,9 @@
           >
             <div class = 'chart-holder'>
               <canvas class = 'canvas__chart'
-              id = "canvas__calorie-totals"></canvas>
+              id = "canvas__calorie-totals"
+              >
+              </canvas>
               <h2 class = 'h2__macro-nutrient-limit'>
                 200
               </h2>
@@ -108,6 +110,8 @@
   // modal
   var modalModal = $('#exampleModal');
 
+  var __CHARTS = []
+
   // set up for each button
   $('.btn__update-chart').each((i,e)=>{
     var hChanger = $(e).parent().find('.h2__macro-nutrient-limit').first();
@@ -132,36 +136,39 @@
       options:{
         title:{
           display:true,
-          text:'Graph'
+          position:'center',
+          text:'here'
+        },
+        centertext:'123',
+        legend:{
+          display:false,
         }
-      }
+      },
+      plugins:[{
+        beforeDraw:function(chart){
+          var w = chart.chart.width;
+          var h = chart.chart.height;
+          var ctx = chart.chart.ctx;
+          ctx.restore();
+          var fontSize = (h).toFixed(2)
+          ctx.font = fontSize + 'em';
+          ctx.textBaseline = 'middle';
+          var text = intLimit;
+          var textX = Math.round((w- ctx.measureText(text).width)/2);
+          var textY = h / 2;
+
+          ctx.fillText(text,textX,textY);
+          ctx.save();
+
+        },
+      }],
     });
+    __CHARTS.push(chartChart);
     // add on click
     $(e).click(()=>{
       updateChart(chartChart,intLimit,hChanger);
     });
   });
-
-  function updateChart(chartChart,intLimit,textChanger){
-    // updates the chart by adding to first index
-    var yValues = chartChart.data.datasets[0].data;
-    yValues[1] +=20
-    yValues[0] -=20
-    
-    if(yValues[1] > intLimit){
-      // alert user
-      //
-      modalModal.modal('toggle');
-      modalModal.find('button').click(()=>{modalModal.modal('toggle')});
-      modalModal.find('.modal-body').first().text('All out!');
-      return;
-    }
-    // update chart
-    chartChart.data.datasets[0].data = yValues
-    chartChart.update()
-    // update the text
-    textChanger.text(yValues[0]);
-  }
 
 
 </script>

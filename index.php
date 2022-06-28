@@ -78,7 +78,7 @@
                 <strong><span id = "span__food-query">...</span></strong>
             </h4>
             <div class ='rounded'
-                style='overflow-y:auto;max-height:15rem;'
+                style='overflow-y:auto;max-height:15rem;height:15rem;'
                 id = 'div__table-holder'
             >
                 <table class = 'table table-hover' id = "table__food-search"
@@ -111,7 +111,7 @@
                 </div>
             </div>
             <div id = "div__saved-food-container"
-            style="overflow-y:scroll;max-height:15rem;"
+            style="overflow-y:scroll;max-height:15rem;height:15rem;"
             >
 
             </div>
@@ -120,22 +120,17 @@
             </span>
         </div>
         <div id = 'div__chart-holder'>
-            <div>
-                <h4 class = 'text-center'>
-                    Macronutrient Charts
-                </h4>
-            </div>
         <div id = "div__graph-container">
             <div class = 'row'>
-            <div class= 'col-6'>
-                <div class = 'div__graph-section text-center
-                p-3 border border-dark rounded
-                ' 
-                >
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name ='fat' data-limit='1200'
+                    >
                     <div class = 'div__chart-holder'>
                         <canvas class = 'canvas__chart' id = "canvas__fat-totals"></canvas>
-                        <h2 class = 'h2__macro-nutrient-limit'>
-                            1200
+                        <h2 class = 'text__graph-title'>
+                            Fat
                         </h2>
                     </div>
                     <br>
@@ -143,14 +138,14 @@
             </div>
             <div class= 'col-6'>
                 <div class = 'div__graph-section text-center
-                p-3 border border-dark rounded
-                ' 
+                p-3 border rounded
+                ' data-name = "calorie" data-limit ='2300'
                 >
                     <div class = 'div__chart-holder'>
                         <canvas class = 'canvas__chart'
                         id = "canvas__calorie-totals"></canvas>
-                        <h2 class = 'h2__macro-nutrient-limit'>
-                            2300
+                        <h2 class = 'text__graph-title'>
+                            Calories
                         </h2>
                     </div>
                     <br>
@@ -191,6 +186,14 @@
 
 </html>
 <script>
+    // store the chart objects and their limits
+    // access like
+    // __CHARTS[CHART_NAME]['chart'] -> gives the chart itself
+    // __CHARTS[CHART_NAME]['limit'] -> gives the chart nutrient limit
+    //
+    var __CHARTS = {
+
+    };
     // functions on start
     //
     $(document).ready(()=>{
@@ -200,10 +203,10 @@
         // set up charts
         //
         $('.div__graph-section').each((i,e)=>{
-            // the h tag to update
-            var hChanger = $(e).find('.h2__macro-nutrient-limit').first();
+            // get name of chart
+            var strName = $(e).attr('data-name');
             // the nutrient limit
-            var intNutrientLimit = parseInt(hChanger.text());
+            var intNutrientLimit = parseInt($(e).attr('data-limit'));
             // the chart id
             var strChartId = $(e).find('.canvas__chart').first().attr('id');
             var xVals = ['Remaining','Used'];
@@ -220,15 +223,29 @@
                         hoverBorderWidth:0,
                     }]
                 },
+                plugins:[{
+                    beforeDraw:function(chart){
+                        var w = chart.chart.width;
+                        var h = chart.chart.height;
+                        var ctx = chart.chart.ctx;
+                        var fontSize = h / 112;
+                        ctx.font = fontSize + 'em sans-serif';
+                        ctx.textBaseline = 'middle';
+                        var text = intNutrientLimit;
+                        var textX = Math.round((w- ctx.measureText(text).width)/2);
+                        var textY = h / 2;
+
+                        ctx.fillText(text,textX,textY);
+                        ctx.save();
+                    }
+                }],
                 options:{
-                    title:{
-                        display:true,
-                        text:'Graph'
+                    legend:{
+                        display:false,
                     }
                 }
             })
-
-
+            __CHARTS[strName]= {'chart':chart,'limit':intNutrientLimit};
         })
 
     });
@@ -262,6 +279,10 @@
 
         // for saved entry
         let divSavedEntry = ""
+
+        // kcal value to add
+        let intAddKcals = null;
+        // fat value to add
         
         if(strDataType == 'usda_non-branded'){
             divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
@@ -285,7 +306,7 @@
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     // add the kcals to the total
                     //
-                    addToTotalKcals(parseInt(strKcals));
+                    intAddKcals = parseInt(strKcals)
                 }
             });
         }else if(strDataType == 'menustat'){
@@ -309,9 +330,8 @@
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     divSavedEntry.find('.span__restaurant').first().text(strRestaurant);
-                    // add the kcals to the total
-                    //
-                    addToTotalKcals(parseInt(strKcals));
+
+                    intAddKcals = parseInt(strKcals);
                 }
             });
         }else if(strDataType == 'usda_branded'){
@@ -335,15 +355,17 @@
                     divSavedEntry.find('.span__serving-size').first().text(strServingSize);
                     divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
                     divSavedEntry.find('.span__brand-owner').first().text(strBrandOwner);
-                    // add the kcals to the total
-                    //
-                    addToTotalKcals(parseInt(strKcals));
+
+                    intAddKcals = parseInt(strKcals);
                 }
             });
         }else{
-            console.log('saved entry: invalid db type');
+            alert('invalid db type');
             return;
         }
+        addToTotalKcals(intAddKcals);
+        // update the kcals graph
+        addToChart(intAddKcals,__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart']);
         // make visible
         //
         divSavedEntry.css('display','');
@@ -352,8 +374,10 @@
         divSavedEntry.find('.svg__x-clicker').first().click(()=>{
             // remove current kcals 
             //
-            let intCurrentKcals = parseInt(divSavedEntry.find('.span__kilocalories').first().text());
-            addToTotalKcals(-1*intCurrentKcals);
+            let intRemoveKcals= -1*parseInt(divSavedEntry.find('.span__kilocalories').first().text());
+            addToTotalKcals(intRemoveKcals);
+            // remove from graph
+            addToChart(intRemoveKcals,__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
 
             // make the table row able to be clicked again
             // and update the background color
@@ -379,8 +403,12 @@
             // update kcal count for individual entry
             divSavedEntry.find('.span__kilocalories').first().text(intNewVal);
             // update total kcal count by subtracting the current kcals and then adding the new
-            addToTotalKcals(-1*intCurrentKcals);
-            addToTotalKcals(intNewVal);
+            //
+            let intChange = intNewVal - intCurrentKcals;
+            addToTotalKcals(intChange);
+            // do the same thing with the graph
+            addToChart(intChange,__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
+
         })
             
         // append to saved
@@ -401,7 +429,6 @@
         // ie: menustat, usda_branded, usda_non_branded
         //
         var strDBType = $("#select__db-options").val();
-        console.log(strDBType);
         // if fdc_id present, get
         //
         var strFdcId = $(trE).attr('data-fdc-id');
@@ -426,7 +453,6 @@
                 // sanity check
                 // console.log(data);
                 let arrData = JSON.parse(data);
-
 
                 // datatype
                 //
@@ -575,7 +601,6 @@
                 $('#span__hidden-offset').text(intNewOffset);
                 // console.log('old offset: '$(''))
 
-                console.log('end of scroll');
                 $.when(ajaxGetFoodSearchResults(strFoodName, strDBType,intNewOffset)).done(
                     function(arrFoods,textStatus,jqXHR){
                         // append the data
@@ -587,6 +612,43 @@
         })
     }
 
+    // update a chart with an added value
+    //
+    function addToChart(intAddVal,intLimit,chartChart){
+        var yVals = chartChart.data.datasets[0].data;
+        // add to used and take away from remaining
+        yVals[1] += intAddVal;
+        yVals[0] -= intAddVal;
+
+        if(yVals[1] > intLimit){
+            // if greater than limit, do something
+            //
+            alert('over limit');
+        }else{
+            // else you just update chart
+            chartChart.data.datasets[0].data = yVals;
+            // update the ctx
+            chartChart.config.plugins[0].beforeDraw = function(chart,options){
+                var w = chart.chart.width;
+                var h = chart.chart.height;
+                var ctx = chart.chart.ctx;
+                var fontSize = h / 112;
+                ctx.font = fontSize + 'em sans-serif';
+                ctx.textBaseline = 'middle';
+                var text = yVals[0];
+                var textX = Math.round((w- ctx.measureText(text).width)/2);
+                var textY = h / 2;
+
+                ctx.fillText(text,textX,textY);
+                ctx.save();
+            }
+
+            chartChart.update();
+        }
+    };
+
+    // add a kcal value to the total kcals
+    //
     function addToTotalKcals(intVal){
         // adds to span__total-kcals value
         //
