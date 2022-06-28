@@ -13,6 +13,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <!-- chart.js -->
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
 
     <title>Nutritionix Mock Demo</title>
 
@@ -24,122 +28,138 @@
         
 </head>
 <body>
-    <br>
-        <div class = 'container shadow' style='height:50rem'>
-            <div class = 'row'>
-                <div class = 'col-8'>
-                    <small>
-                        Food Name
-                    </small>
-                    <div class="input-group">
-                        <span class="input-group-text" id ="span__svg-clicker-holder">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
-                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
-                            </svg>
-                        </span>
-                        <input id = "input___food-name" 
-                        placeholder = 'type at least 3 characters'
-                        class = 'form-control' > 
-                    </div>
-                </div>
-                <div class = 'col-4'>
-                    <small>
-                        Database Type
-                    </small>
-                    <select class = "form-select" id = "select__db-options">
-                        <option selected value = "menustat">
-                            <h2>
-                                Menustat
-                            </h2>
-                        </option>
-                        <option value = "usda_branded">
-                            <h2>
-                                USDA Branded
-                            </h2>
-                        </option>
-                        <option value = "usda_non-branded">
-                            <h2>
-                                USDA Non-branded
-                            </h2>
-                        </option>
-                    </select>
-                </div>
-                <div class = 'col-6'>
+    <div class = 'container shadow p-3'>
+        <div class = 'row'>
+            <div class = 'col-8'>
+                <small>
+                    Food Name
+                </small>
+                <div class="input-group">
+                    <span class="input-group-text" id ="span__svg-clicker-holder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
+                        </svg>
+                    </span>
+                    <input id = "input___food-name" 
+                    placeholder = 'type at least 3 characters'
+                    class = 'form-control' > 
                 </div>
             </div>
-            <br>
-            <div>
-                <h4>
-                    Results for 
-                    <strong><span id = "span__food-query">...</span></strong>
-                </h4>
-                <div class ='rounded'
-                    style='overflow-y:auto;max-height:15rem;'
-                    id = 'div__table-holder'
+            <div class = 'col-4'>
+                <small>
+                    Database Type
+                </small>
+                <select class = "form-select" id = "select__db-options">
+                    <option selected value = "menustat">
+                        <h2>
+                            Menustat
+                        </h2>
+                    </option>
+                    <option value = "usda_branded">
+                        <h2>
+                            USDA Branded
+                        </h2>
+                    </option>
+                    <option value = "usda_non-branded">
+                        <h2>
+                            USDA Non-branded
+                        </h2>
+                    </option>
+                </select>
+            </div>
+            <div class = 'col-6'>
+            </div>
+        </div>
+        <br>
+        <div>
+            <h4>
+                Results for 
+                <strong><span id = "span__food-query">...</span></strong>
+            </h4>
+            <div class ='rounded'
+                style='overflow-y:auto;max-height:15rem;'
+                id = 'div__table-holder'
+            >
+                <table class = 'table table-hover' id = "table__food-search"
                 >
-                    <table class = 'table table-hover' id = "table__food-search"
-                    >
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col" class = 'text-center'>Food Info</th>
-                                <th scope="col" class=  'text-center'>Food Image</th>
-                            </tr>
-                        </thead>
-                        <tbody id = "div__results-container">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" class = 'text-center'>Food Info</th>
+                            <th scope="col" class=  'text-center'>Food Image</th>
+                        </tr>
+                    </thead>
+                    <tbody id = "div__results-container">
 
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
-            <br>
-            <div>
-                <div class = 'd-flex justify-content-between'>
-                    <div>
-                        <h4>
-                            Stored Foods
-                        </h4>
-                    </div>
-                    <div>
-                        <h4>
-                            Total Kilocalories: <span id = "span__total-kcals" class = 'text-success'>0</span>
-                        </h4>
-                    </div>
-                </div>
-                <div id = "div__saved-food-container"
-                style="overflow-y:scroll;max-height:15rem;"
-                >
-
-                </div>
-                <span id = 'span__hidden-offset' style='display:none'>
-                    0
-                </span>
-            </div>
-            <div id = 'div__chart-holder'>
+        </div>
+        <br>
+        <div>
+            <div class = 'd-flex justify-content-between'>
                 <div>
                     <h4>
-                        Macronutrient Charts
+                        Stored Foods
                     </h4>
                 </div>
-                <div class = 'div__chart-container'>
-                    <div class = 'row'>
-                        <div class = 'div__graph-section' id = 'div__group-01'>
-                            <div class = 'col-6'>
-                                <canvas id ='canvas__fat-totals'>
-
-                                </canvas>
-                            </div>
-                            <div class = 'col-6'>
-                                <canvas id ='canvas__calories-totals'>
-
-                                </canvas>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <h4>
+                        Total Kilocalories: <span id = "span__total-kcals" class = 'text-success'>0</span>
+                    </h4>
                 </div>
             </div>
-        </div> 
+            <div id = "div__saved-food-container"
+            style="overflow-y:scroll;max-height:15rem;"
+            >
+
+            </div>
+            <span id = 'span__hidden-offset' style='display:none'>
+                0
+            </span>
+        </div>
+        <div id = 'div__chart-holder'>
+            <div>
+                <h4 class = 'text-center'>
+                    Macronutrient Charts
+                </h4>
+            </div>
+        <div id = "div__graph-container">
+            <div class = 'row'>
+            <div class= 'col-6'>
+                <div class = 'div__graph-section text-center
+                p-3 border border-dark rounded
+                ' 
+                >
+                    <div class = 'div__chart-holder'>
+                        <canvas class = 'canvas__chart' id = "canvas__fat-totals"></canvas>
+                        <h2 class = 'h2__macro-nutrient-limit'>
+                            1200
+                        </h2>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <div class= 'col-6'>
+                <div class = 'div__graph-section text-center
+                p-3 border border-dark rounded
+                ' 
+                >
+                    <div class = 'div__chart-holder'>
+                        <canvas class = 'canvas__chart'
+                        id = "canvas__calorie-totals"></canvas>
+                        <h2 class = 'h2__macro-nutrient-limit'>
+                            2300
+                        </h2>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    </div> 
 
 <!-- 
     For hidden menustat entry
@@ -174,7 +194,43 @@
     // functions on start
     //
     $(document).ready(()=>{
+        // allow for scrolling more
+        //
         scrollMore();
+        // set up charts
+        //
+        $('.div__graph-section').each((i,e)=>{
+            // the h tag to update
+            var hChanger = $(e).find('.h2__macro-nutrient-limit').first();
+            // the nutrient limit
+            var intNutrientLimit = parseInt(hChanger.text());
+            // the chart id
+            var strChartId = $(e).find('.canvas__chart').first().attr('id');
+            var xVals = ['Remaining','Used'];
+            var yVals = [intNutrientLimit,0];
+            var pieColors = ['green','red'];
+            var chart = new Chart(strChartId,{
+                type:'doughnut',
+                data:{
+                    labels:xVals,
+                    datasets:[{
+                        backgroundColor:pieColors,
+                        data:yVals,
+                        borderWidth:0,
+                        hoverBorderWidth:0,
+                    }]
+                },
+                options:{
+                    title:{
+                        display:true,
+                        text:'Graph'
+                    }
+                }
+            })
+
+
+        })
+
     });
 
     // function to allow other function to 
@@ -190,7 +246,12 @@
     }
 
     // add to saved button //
-    function addToSavedClick(strDataType,modalModal){
+    function addToSavedClick(strDataType,modalModal,trE){
+        // disable to table row
+        $(trE).css('background-color','silver');
+        // remove the onclick
+        $(trE).attr("onclick","");
+
         $(modalModal).modal('hide');
         // depending on data type, change how saved info looks
         //
@@ -198,6 +259,7 @@
         let strFoodName = $(modalModal).find('.span__description').first().text();
         // get img src
         let strImgSrc = $(modalModal).find('.img__food-img').first().attr('src');
+
         // for saved entry
         let divSavedEntry = ""
         
@@ -292,6 +354,14 @@
             //
             let intCurrentKcals = parseInt(divSavedEntry.find('.span__kilocalories').first().text());
             addToTotalKcals(-1*intCurrentKcals);
+
+            // make the table row able to be clicked again
+            // and update the background color
+            //
+            $(trE).attr('onclick','displayMore(this)');
+            $(trE).css('background-color','');
+            
+
             divSavedEntry.remove();
         });
         // when update Qty update kcal amount
@@ -397,7 +467,7 @@
                 // add a save feature
                 //
                 $('#simpleModal').find('.btn__add-to-saved').first().click(()=>{
-                    addToSavedClick(strDBType,$('#simpleModal'));
+                    addToSavedClick(strDBType,$('#simpleModal'),trE);
                 })
                 
             }
@@ -550,10 +620,5 @@
     $("#input__per-page").change(()=>{
         voidQueryNamesInitial();
     })
-
-    // for graphs
-    var xFatLabel = ['Total Fat']
-    var yFatValues = []
-
 
 </script>
