@@ -132,6 +132,9 @@
                         <h2 class = 'text__graph-title'>
                             Fat
                         </h2>
+                        <smalL>
+                            Limit: 1200
+                        </small>
                     </div>
                     <br>
                 </div>
@@ -147,6 +150,9 @@
                         <h2 class = 'text__graph-title'>
                             Calories
                         </h2>
+                        <smalL>
+                            Limit: 2300
+                        </small>
                     </div>
                     <br>
                 </div>
@@ -194,6 +200,15 @@
     var __CHARTS = {
 
     };
+
+    // standard pie chart colors
+    //
+    var __CHART_COLORS = {
+        'my-green':"#4ad323",
+        'my-red':'#e00814',
+        'my-black':'#080808'
+    }
+
     // functions on start
     //
     $(document).ready(()=>{
@@ -211,15 +226,15 @@
             var strChartId = $(e).find('.canvas__chart').first().attr('id');
             var xVals = ['Remaining','Used'];
             var yVals = [intNutrientLimit,0];
-            var pieColors = ['green','red'];
             var chart = new Chart(strChartId,{
                 type:'doughnut',
                 data:{
                     labels:xVals,
                     datasets:[{
-                        backgroundColor:pieColors,
+                        backgroundColor:[__CHART_COLORS['my-black'],__CHART_COLORS['my-green']],
                         data:yVals,
-                        borderWidth:0,
+                        borderWidth:2,
+                        borderColor:__CHART_COLORS['my-black'],
                         hoverBorderWidth:0,
                     }]
                 },
@@ -231,7 +246,7 @@
                         var fontSize = h / 112;
                         ctx.font = fontSize + 'em sans-serif';
                         ctx.textBaseline = 'middle';
-                        var text = intNutrientLimit;
+                        var text = "0%";
                         var textX = Math.round((w- ctx.measureText(text).width)/2);
                         var textY = h / 2;
 
@@ -541,7 +556,7 @@
             function(arrFoods, textStatus, jqXHR){
                 $('#div__results-container').html(arrFoods);
             }
-        )
+        );
     };
 
     // get names from db
@@ -603,48 +618,97 @@
 
                 $.when(ajaxGetFoodSearchResults(strFoodName, strDBType,intNewOffset)).done(
                     function(arrFoods,textStatus,jqXHR){
-                        // append the data
-                        //
-                        $('#div__results-container').append(arrFoods);
-                    }
+                        console.log('querying: '+ strDBType + ' for ' + strFoodName);
+                        return $.ajax({
+                            url:'php/funcs/query_names.php',
+                            type:'GET',
+                            dataType:'html',
+                            data:{
+                                strQuery:strFoodName,
+                                strDBType:strDBType,
+                                intOffset:intOffset
+                            },
+                            success:function(data){
+                                // return the data
+                                //
+                                return data;
+                            }
+                        }).done((response)=>{
+                            console.log('success');
+                        }).fail((response)=>{
+                            console.log('fail');
+                        })}
                 )
             }
         })
     }
 
     // update a chart with an added value
+    // note that we only update if the new value is within
+    // 0 - intLimit
+    // else we are still over limit and it doesn't matter to update
+    // NOTE:
+    // THIS IS DEPENDENT ON THE TOTAL KCALS VALUE
+    // MAKE SURE THAT THAT VALUE UPDATES PRIOR TO 
+    // UPDATING CHART
     //
     function addToChart(intAddVal,intLimit,chartChart){
+        // get the original value
+        console.log('_____')
+        var intFinalAfterAdding= parseInt($('#span__total-kcals').text());
+        console.log('final val after add: '+intFinalAfterAdding);
+        console.log('added val: ' + intAddVal);
+        console.log('limit: ' + intLimit);
+        console.log('_____')
+
+        // yVals[0] = remaining
+        // yVals[1] = used
         var yVals = chartChart.data.datasets[0].data;
-        // add to used and take away from remaining
-        yVals[1] += intAddVal;
-        yVals[0] -= intAddVal;
 
-        if(yVals[1] > intLimit){
-            // if greater than limit, do something
+        if(intFinalAfterAdding>= intLimit){
+            // don't do anything as we are still above the limit
+            // only change the background color / border if it is not already changed
             //
-            alert('over limit');
-        }else{
-            // else you just update chart
-            chartChart.data.datasets[0].data = yVals;
-            // update the ctx
-            chartChart.config.plugins[0].beforeDraw = function(chart,options){
-                var w = chart.chart.width;
-                var h = chart.chart.height;
-                var ctx = chart.chart.ctx;
-                var fontSize = h / 112;
-                ctx.font = fontSize + 'em sans-serif';
-                ctx.textBaseline = 'middle';
-                var text = yVals[0];
-                var textX = Math.round((w- ctx.measureText(text).width)/2);
-                var textY = h / 2;
-
-                ctx.fillText(text,textX,textY);
-                ctx.save();
+            if(chartChart.chart.data.datasets[0].backgroundColor[1] != __CHART_COLORS['my-red']){
+                // change to red
+                chartChart.chart.data.datasets[0].backgroundColor[1] = __CHART_COLORS['my-red'];
+                // remove border
+                chartChart.chart.data.datasets[0] .borderWidth = 0;
+                // update the text to be 100%
+                yVals[0] = 0;
+                yVals[1] = intLimit;
+                chartChart.update();
             }
-
-            chartChart.update();
+            return;
         }
+        // else we just continue 
+
+        // add to used and take away from remaining
+        yVals[1] = intFinalAfterAdding;
+        yVals[0] = intLimit - intFinalAfterAdding;
+
+        if(chartChart.chart.data.datasets[0].backgroundColor[1] ==__CHART_COLORS['my-red']){
+            chartChart.chart.data.datasets[0].backgroundColor[1] = __CHART_COLORS['my-green'];
+            chartChart.chart.data.datasets[0].borderWidth = 2;
+        }
+        // else you just update chart
+        chartChart.data.datasets[0].data = yVals;
+        // update the ctx
+        chartChart.config.plugins[0].beforeDraw = function(chart,options){
+            var w = chart.chart.width;
+            var h = chart.chart.height;
+            var ctx = chart.chart.ctx;
+            var fontSize = h / 112;
+            ctx.font = fontSize + 'em sans-serif';
+            ctx.textBaseline = 'middle';
+            var text = Math.ceil((yVals[1] / intLimit)*100) + "%";
+            var textX = Math.round((w- ctx.measureText(text).width)/2);
+            var textY = h / 2;
+
+            ctx.fillText(text,textX,textY);
+            ctx.save();
+        }
+        chartChart.update();
     };
 
     // add a kcal value to the total kcals
@@ -653,8 +717,8 @@
         // adds to span__total-kcals value
         //
         // get original value
-        let intOriginalValue = parseInt($("#span__total-kcals").text());
-        let intNewVal = intOriginalValue + intVal;
+        let intOriginalVal = parseInt($("#span__total-kcals").text());
+        let intNewVal = intOriginalVal + intVal;
         // set new val
         $("#span__total-kcals").text(intNewVal);
     }
