@@ -104,11 +104,6 @@
                         Stored Foods
                     </h4>
                 </div>
-                <div>
-                    <h4>
-                        Total Kilocalories: <span id = "span__total-kcals" class = 'text-success'>0</span>
-                    </h4>
-                </div>
             </div>
             <div id = "div__saved-food-container"
             style="overflow-y:scroll;max-height:15rem;height:15rem;"
@@ -127,37 +122,103 @@
                     p-3 border rounded
                     ' data-name ='fat' data-limit='1200'
                     >
-                    <div class = 'div__chart-holder'>
-                        <canvas class = 'canvas__chart' id = "canvas__fat-totals"></canvas>
-                        <h2 class = 'text__graph-title'>
-                            Fat
-                        </h2>
-                        <smalL>
-                            Limit: 1200
-                        </small>
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart' id = "canvas__fat-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Fat
+                            </h2>
+                            <smalL>
+                                Limit: 1200
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-fat" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
                     </div>
-                    <br>
+                </div>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name = "calorie" data-limit ='2300'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart'
+                            id = "canvas__calorie-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Calories
+                            </h2>
+                            <smalL>
+                                Limit: 2300
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-calories" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
+                    </div>
                 </div>
             </div>
-            <div class= 'col-6'>
-                <div class = 'div__graph-section text-center
-                p-3 border rounded
-                ' data-name = "calorie" data-limit ='2300'
-                >
-                    <div class = 'div__chart-holder'>
-                        <canvas class = 'canvas__chart'
-                        id = "canvas__calorie-totals"></canvas>
-                        <h2 class = 'text__graph-title'>
-                            Calories
-                        </h2>
-                        <smalL>
-                            Limit: 2300
-                        </small>
+            <br>
+            <div class = 'row'>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name ='potassium' data-limit='1800'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart' id = "canvas__potassium-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Potassium
+                            </h2>
+                            <smalL>
+                                Limit: 1800
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-potassium" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
                     </div>
-                    <br>
+                </div>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name = "fiber" data-limit ='1500'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart'
+                            id = "canvas__fiber-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Fiber
+                            </h2>
+                            <smalL>
+                                Limit: 1500
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-fiber" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
         </div>
     </div> 
@@ -202,6 +263,7 @@
     };
 
     // standard pie chart colors
+    // find out why my css is not working
     //
     var __CHART_COLORS = {
         'my-green':"#4ad323",
@@ -380,7 +442,7 @@
         }
         addToTotalKcals(intAddKcals);
         // update the kcals graph
-        addToChart(intAddKcals,__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart']);
+        updateChart($('#span__total-calories'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart']);
         // make visible
         //
         divSavedEntry.css('display','');
@@ -392,14 +454,13 @@
             let intRemoveKcals= -1*parseInt(divSavedEntry.find('.span__kilocalories').first().text());
             addToTotalKcals(intRemoveKcals);
             // remove from graph
-            addToChart(intRemoveKcals,__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
+            updateChart($('#span__total-calories'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
 
             // make the table row able to be clicked again
             // and update the background color
             //
             $(trE).attr('onclick','displayMore(this)');
             $(trE).css('background-color','');
-            
 
             divSavedEntry.remove();
         });
@@ -422,7 +483,7 @@
             let intChange = intNewVal - intCurrentKcals;
             addToTotalKcals(intChange);
             // do the same thing with the graph
-            addToChart(intChange,__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
+            updateChart($('#span__total-calories'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
 
         })
             
@@ -652,18 +713,14 @@
     // MAKE SURE THAT THAT VALUE UPDATES PRIOR TO 
     // UPDATING CHART
     //
-    function addToChart(intAddVal,intLimit,chartChart){
+    function updateChart(spanUpdateSpan,intLimit,chartChart){
         // get the original value
-        console.log('_____')
-        var intFinalAfterAdding= parseInt($('#span__total-kcals').text());
-        console.log('final val after add: '+intFinalAfterAdding);
-        console.log('added val: ' + intAddVal);
-        console.log('limit: ' + intLimit);
-        console.log('_____')
 
         // yVals[0] = remaining
         // yVals[1] = used
         var yVals = chartChart.data.datasets[0].data;
+
+        var intFinalAfterAdding = parseInt(spanUpdateSpan.text());
 
         if(intFinalAfterAdding>= intLimit){
             // don't do anything as we are still above the limit
@@ -672,6 +729,9 @@
             if(chartChart.chart.data.datasets[0].backgroundColor[1] != __CHART_COLORS['my-red']){
                 // change to red
                 chartChart.chart.data.datasets[0].backgroundColor[1] = __CHART_COLORS['my-red'];
+                // change span of data type to red
+                spanUpdateSpan.css('color','red');
+                
                 // remove border
                 chartChart.chart.data.datasets[0] .borderWidth = 0;
                 // update the text to be 100%
@@ -689,6 +749,7 @@
 
         if(chartChart.chart.data.datasets[0].backgroundColor[1] ==__CHART_COLORS['my-red']){
             chartChart.chart.data.datasets[0].backgroundColor[1] = __CHART_COLORS['my-green'];
+                spanUpdateSpan.css('color','green');
             chartChart.chart.data.datasets[0].borderWidth = 2;
         }
         // else you just update chart
@@ -714,13 +775,13 @@
     // add a kcal value to the total kcals
     //
     function addToTotalKcals(intVal){
-        // adds to span__total-kcals value
+        // adds to span__total-calories value
         //
         // get original value
-        let intOriginalVal = parseInt($("#span__total-kcals").text());
+        let intOriginalVal = parseInt($("#span__total-calories").text());
         let intNewVal = intOriginalVal + intVal;
         // set new val
-        $("#span__total-kcals").text(intNewVal);
+        $("#span__total-calories").text(intNewVal);
     }
 
     // on click clockwise clicker query
