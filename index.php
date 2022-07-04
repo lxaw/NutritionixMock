@@ -676,29 +676,12 @@
                 // need to update the offset
                 $('#span__hidden-offset').text(intNewOffset);
                 // console.log('old offset: '$(''))
-
-                $.when(ajaxGetFoodSearchResults(strFoodName, strDBType,intNewOffset)).done(
-                    function(arrFoods,textStatus,jqXHR){
-                        console.log('querying: '+ strDBType + ' for ' + strFoodName);
-                        return $.ajax({
-                            url:'php/funcs/query_names.php',
-                            type:'GET',
-                            dataType:'html',
-                            data:{
-                                strQuery:strFoodName,
-                                strDBType:strDBType,
-                                intOffset:intOffset
-                            },
-                            success:function(data){
-                                // return the data
-                                //
-                                return data;
-                            }
-                        }).done((response)=>{
-                            console.log('success');
-                        }).fail((response)=>{
-                            console.log('fail');
-                        })}
+                $.when(ajaxGetFoodSearchResults(strFoodName,strDBType,intNewOffset)).done(
+                    function(arrFoods, textStatus, jqXHR){
+                        // append data
+                        //
+                        $('#div__results-container').append(arrFoods);
+                    }
                 )
             }
         })
