@@ -259,6 +259,10 @@ class TemplateLoader{
                 $modalData = str_replace('[fat_amount]',$subElement['fat_amount'],$modalData);
                 // give protein
                 $modalData = str_replace('[protein_amount]',$subElement['protein_amount'],$modalData);
+                // give potassium
+                $modalData = str_replace('[potassium_amount]',$subElement['potassium_amount'],$modalData);
+                // give fiber
+                $modalData = str_replace('[fiber_amount]',$subElement['fiber_amount'],$modalData);
                 // give portion gram weight
                 $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
                 $modalData = str_replace('[serving_size_unit]',$subElement['serving_size_unit'],$modalData);

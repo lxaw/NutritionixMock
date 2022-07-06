@@ -28,29 +28,31 @@ class DBSearcher{
     // str for food name, str for restaurant name
     // Outputs:
     // array of data on the food
-    function arrQueryMenustatDetail($strFoodName,$strRestaurantName){
+    function arrQueryMenustatDetail($strId){
         $stmt = $this->_MySQLiConnection->mysqli()->prepare('
             select
                 *
             from
-                menustat_single_rows 
+                menustat_all
             where
-                description = ? 
-            and
-                restaurant = ?
+                menustat_id = ?
         ');
-        $stmt->bind_param("ss",$strFoodName,$strRestaurantName);
+        $stmt->bind_param("i",$strId);
         $stmt->execute();
         $result = $stmt->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
 
+        // populate all of the data that doesn't change between entries
+        //
         $templateData = array(
             'data_type'=>kDataTypeMenustat,
-            'description'=>$strFoodName,
-            'restaurant'=>$strRestaurantName,
-            'img_src'=>strGetImgPath($strFoodName,$strRestaurantName,kIMG_DIR.'/'.kMENUSTAT_IMGS)
+            'id'=>$strId,
+            'description'=>strReplaceIfNull($data[0]['description'],kNULL_REPLACEMENT),
+            'restaurant'=>strReplaceIfNull($data[0]['restaurant'],kNULL_REPLACEMENT),
+            'img_src'=>strGetImgPath($data[0]['description'],$data[0]['restaurant'],kIMG_DIR.'/'.kMENUSTAT_IMGS)
         );
-        
+        // populate the data that does change between entries
+        //
         foreach($data as $tableEntry){
             $arrSubEntry = array(
                 'serving_size'=>strReplaceIfNull($tableEntry['serving_size'],kNULL_REPLACEMENT),
@@ -59,7 +61,9 @@ class DBSearcher{
                 'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],kNULL_REPLACEMENT),
                 'energy_amount'=>strReplaceIfNull($tableEntry['energy_amount'],kNULL_REPLACEMENT),
                 'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],kNULL_REPLACEMENT),
-                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],kNULL_REPLACEMENT)
+                'carb_amount'=>strReplaceIfNull($tableEntry['carb_amount'],kNULL_REPLACEMENT),
+                'potassium_amount'=>strReplaceIfNull($tableEntry['potassium_amount'],kNULL_REPLACEMENT),
+                'fiber_amount'=>strReplaceIfNull($tableEntry['fiber_amount'],kNULL_REPLACEMENT)
             );
             // push template data
             //
@@ -107,6 +111,7 @@ class DBSearcher{
         $strServingSizeText = "";
         $strServingSizeUnit = "";
         $strImgPath = "";
+        $strId = '';
 
         // start the index off at the offset value
         $intIndex = $intOffset;
@@ -119,12 +124,14 @@ class DBSearcher{
             $strRestaurant = strReplaceIfNull($subArr['restaurant'],kNULL_REPLACEMENT);
             $strDescription= strReplaceIfNull($subArr['description'],kNULL_REPLACEMENT);
             $strImgPath = strGetImgPath($strDescription,$strRestaurant,kIMG_DIR.'/'.kMENUSTAT_IMGS);
+            $strId = strReplaceIfNull($subArr['menustat_id'],kNULL_REPLACEMENT);
 
             $templateData = array(
                 "index" =>$intIndex,
                 "restaurant" => $strRestaurant,
                 "description" => $strDescription,
                 "img_path"=>$strImgPath,
+                'id'=>$strId,
             );
             array_push($arrAllTemplateData,$templateData);
             $intIndex += 1;

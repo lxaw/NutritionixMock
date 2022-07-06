@@ -505,19 +505,17 @@
         // ie: menustat, usda_branded, usda_non_branded
         //
         var strDBType = $("#select__db-options").val();
-        // if fdc_id present, get
+        // get id
         //
-        var strFdcId = $(trE).attr('data-fdc-id');
+        var strId = $(trE).attr('data-id');
 
         $.ajax({
             url: "php/funcs/query_info.php",
             type:'GET',
             dataType:'html',
             data:{
-                strFoodName:strFoodName,
-                strRestaurantName: strRestaurantName,
                 strDBType:strDBType,
-                strFdcId:strFdcId
+                strId:strId,
             },
             success:function(data){
                 // data is an array of
@@ -527,7 +525,6 @@
                 //
 
                 // sanity check
-                // console.log(data);
                 let arrData = JSON.parse(data);
 
                 // datatype
