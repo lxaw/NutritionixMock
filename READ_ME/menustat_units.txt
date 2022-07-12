@@ -1,0 +1,10 @@
+Calories: kcal
+Fat: g
+Sugars: g
+Protein: g
+Sodium: mg
+Fiber: g
+Calories from Fat: kcal
+Sat fat: g
+Trans fat: g
+Cholestorel: mg
