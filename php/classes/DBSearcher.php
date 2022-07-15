@@ -325,6 +325,10 @@ class DBSearcher{
                 'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],kNULL_REPLACEMENT),
                 'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],kNULL_REPLACEMENT),
                 'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],kNULL_REPLACEMENT),
+                'potassium_amount'=>strReplaceIfNull($tableEntry['potassium_amount'],kNULL_REPLACEMENT),
+                'potassium_unit'=>strReplaceIfNull($tableEntry['potassium_unit'],kNULL_REPLACEMENT),
+                'fiber_amount'=>strReplaceIfNull($tableEntry['fiber_amount'],kNULL_REPLACEMENT),
+                'fiber_unit'=>strReplaceIfNull($tableEntry['fiber_unit'],kNULL_REPLACEMENT),
             );
             // push to template data
             //
@@ -393,7 +397,13 @@ class DBSearcher{
                 'carb_unit'=>strReplaceIfNull($tableEntry['carb_unit'],kNULL_REPLACEMENT),
                 'fat_amount'=>strReplaceIfNull($tableEntry['fat_amount'],kNULL_REPLACEMENT),
                 'fat_unit'=>strReplaceIfNull($tableEntry['fat_unit'],kNULL_REPLACEMENT),
+                'protein_amount'=>strReplaceIfNull($tableEntry['protein_amount'],kNULL_REPLACEMENT),
+                'protein_unit'=>strReplaceIfNull($tableEntry['protein_unit'],kNULL_REPLACEMENT),
+                'fiber_amount'=>strReplaceIfNull($tableEntry['fiber_amount'],kNULL_REPLACEMENT),
+                'fiber_unit'=>strReplaceIfNull($tableEntry['fiber_unit'],kNULL_REPLACEMENT),
                 'serving_text'=>strReplaceIfNull($tableEntry['serving_text'],kNULL_REPLACEMENT),
+                'potassium_amount'=>strReplaceIfNull($tableEntry['potassium_amount'],kNULL_REPLACEMENT),
+                'potassium_unit'=>strReplaceIfNull($tableEntry['potassium_unit'],kNULL_REPLACEMENT),
             );
             // push to template data
             //

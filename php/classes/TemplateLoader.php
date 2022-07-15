@@ -127,13 +127,19 @@ class TemplateLoader{
                 $modalData = str_replace('[carbohydrate_amount]',$subElement['carb_amount'],$modalData);
                 $modalData = str_replace('[carbohydrate_unit]',$subElement['carb_unit'],$modalData);
                 // give energy
-                $modalData = str_replace('[kilocalorie_amount]',$subElement['energy_amount'],$modalData);
+                $modalData = str_replace('[energy_amount]',$subElement['energy_amount'],$modalData);
                 // give fat
                 $modalData = str_replace('[fat_amount]',$subElement['fat_amount'],$modalData);
                 $modalData = str_replace('[fat_unit]',$subElement['fat_unit'],$modalData);
                 // give protein
                 $modalData = str_replace('[protein_amount]',$subElement['protein_amount'],$modalData);
                 $modalData = str_replace('[protein_unit]',$subElement['protein_unit'],$modalData);
+                // give potassium
+                $modalData = str_replace('[potassium_amount]',$subElement['potassium_amount'],$modalData);
+                $modalData = str_replace('[potassium_unit]',$subElement['potassium_unit'],$modalData);
+                // give fiber
+                $modalData = str_replace('[fiber_amount]',$subElement['fiber_amount'],$modalData);
+                $modalData = str_replace('[fiber_unit]',$subElement['fiber_unit'],$modalData);
                 // give portion gram weight
                 $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
                 // append to modals
@@ -254,7 +260,7 @@ class TemplateLoader{
                 // give carbs
                 $modalData = str_replace('[carbohydrate_amount]',$subElement['carb_amount'],$modalData);
                 // give energy
-                $modalData = str_replace('[kilocalorie_amount]',$subElement['energy_amount'],$modalData);
+                $modalData = str_replace('[calorie_amount]',$subElement['energy_amount'],$modalData);
                 // give fat
                 $modalData = str_replace('[fat_amount]',$subElement['fat_amount'],$modalData);
                 // give protein
@@ -392,7 +398,7 @@ class TemplateLoader{
                 $modalData = str_replace('[carbohydrate_amount]',$subElement['carb_amount'],$modalData);
                 $modalData = str_replace('[carbohydrate_unit]',$subElement['carb_unit'],$modalData);
                 // give energy
-                $modalData = str_replace('[kilocalorie_amount]',$subElement['energy_amount'],$modalData);
+                $modalData = str_replace('[calorie_amount]',$subElement['energy_amount'],$modalData);
                 // give fat
                 $modalData = str_replace('[fat_amount]',$subElement['fat_amount'],$modalData);
                 $modalData = str_replace('[fat_unit]',$subElement['fat_unit'],$modalData);
@@ -402,6 +408,12 @@ class TemplateLoader{
                 // give portion gram weight
                 $modalData = str_replace('[serving_size]',$subElement['serving_size'],$modalData);
                 $modalData = str_replace('[serving_size_unit]',$subElement['serving_size_unit'],$modalData);
+                // give potassium
+                $modalData = str_replace('[potassium_amount]',$subElement['potassium_amount'],$modalData);
+                $modalData = str_replace('[potassium_unit]',$subElement['potassium_unit'],$modalData);
+                // give fiber
+                $modalData = str_replace('[fiber_amount]',$subElement['fiber_amount'],$modalData);
+                $modalData = str_replace('[fiber_unit]',$subElement['fiber_unit'],$modalData);
 
                 // give brand owner
                 $modalData = str_replace('[brand_owner]',$arrUsdaData['brand_owner'],$modalData);

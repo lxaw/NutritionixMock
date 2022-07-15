@@ -589,6 +589,7 @@
                 //
 
                 // sanity check
+                // console.log(data)
                 let arrData = JSON.parse(data);
 
                 // datatype
