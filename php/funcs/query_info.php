@@ -19,9 +19,7 @@ require_once('../classes/TemplateLoader.php');
 
 
 if(
-    isset($_GET['strFoodName'])
-    &&
-    isset($_GET['strRestaurantName'])
+    isset($_GET['strId'])
     &&
     isset($_GET['strDBType'])
 ){
@@ -38,7 +36,7 @@ if(
     //
     switch($_GET['strDBType']){
         case "menustat":
-            $arrTemplateData = $dbSearcher->arrQueryMenustatDetail($_GET['strFoodName'],$_GET['strRestaurantName']);
+            $arrTemplateData = $dbSearcher->arrQueryMenustatDetail($_GET['strId']);
 
             // load the data into html
             //
@@ -59,7 +57,7 @@ if(
             echo(json_encode($arrRet));
             break;
         case "usda_branded":
-            $arrTemplateData = $dbSearcher->arrQueryUSDABrandedDetail($_GET['strFdcId']);
+            $arrTemplateData = $dbSearcher->arrQueryUSDABrandedDetail($_GET['strId']);
 
             // load the data into html
             //
@@ -83,7 +81,7 @@ if(
         case "usda_non-branded":
             // likely to get more than one entry, so need to return multiple
             //
-            $arrTemplateData = $dbSearcher->arrQueryUSDANonBrandedDetail($_GET['strFdcId']);
+            $arrTemplateData = $dbSearcher->arrQueryUSDANonBrandedDetail($_GET['strId']);
 
             // load the data into html
             //

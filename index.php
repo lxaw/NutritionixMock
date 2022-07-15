@@ -13,6 +13,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <!-- chart.js -->
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
 
     <title>Nutritionix Mock Demo</title>
 
@@ -24,122 +28,200 @@
         
 </head>
 <body>
-    <br>
-        <div class = 'container shadow' style='height:50rem'>
-            <div class = 'row'>
-                <div class = 'col-8'>
-                    <small>
-                        Food Name
-                    </small>
-                    <div class="input-group">
-                        <span class="input-group-text" id ="span__svg-clicker-holder">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
-                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
-                            </svg>
-                        </span>
-                        <input id = "input___food-name" 
-                        placeholder = 'type at least 3 characters'
-                        class = 'form-control' > 
-                    </div>
-                </div>
-                <div class = 'col-4'>
-                    <small>
-                        Database Type
-                    </small>
-                    <select class = "form-select" id = "select__db-options">
-                        <option selected value = "menustat">
-                            <h2>
-                                Menustat
-                            </h2>
-                        </option>
-                        <option value = "usda_branded">
-                            <h2>
-                                USDA Branded
-                            </h2>
-                        </option>
-                        <option value = "usda_non-branded">
-                            <h2>
-                                USDA Non-branded
-                            </h2>
-                        </option>
-                    </select>
-                </div>
-                <div class = 'col-6'>
+    <div class = 'container shadow p-3'>
+        <div class = 'row'>
+            <div class = 'col-8'>
+                <small>
+                    Food Name
+                </small>
+                <div class="input-group">
+                    <span class="input-group-text" id ="span__svg-clicker-holder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
+                        </svg>
+                    </span>
+                    <input id = "input___food-name" 
+                    placeholder = 'type at least 3 characters'
+                    class = 'form-control' > 
                 </div>
             </div>
-            <br>
-            <div>
-                <h4>
-                    Results for 
-                    <strong><span id = "span__food-query">...</span></strong>
-                </h4>
-                <div class ='rounded'
-                    style='overflow-y:auto;max-height:15rem;'
-                    id = 'div__table-holder'
+            <div class = 'col-4'>
+                <small>
+                    Database Type
+                </small>
+                <select class = "form-select" id = "select__db-options">
+                    <option selected value = "menustat">
+                        <h2>
+                            Menustat
+                        </h2>
+                    </option>
+                    <option value = "usda_branded">
+                        <h2>
+                            USDA Branded
+                        </h2>
+                    </option>
+                    <option value = "usda_non-branded">
+                        <h2>
+                            USDA Non-branded
+                        </h2>
+                    </option>
+                </select>
+            </div>
+            <div class = 'col-6'>
+            </div>
+        </div>
+        <br>
+        <div>
+            <h4>
+                Results for 
+                <strong><span id = "span__food-query">...</span></strong>
+            </h4>
+            <div class ='rounded'
+                style='overflow-y:auto;max-height:15rem;height:15rem;'
+                id = 'div__table-holder'
+            >
+                <table class = 'table table-hover' id = "table__food-search"
                 >
-                    <table class = 'table table-hover' id = "table__food-search"
-                    >
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col" class = 'text-center'>Food Info</th>
-                                <th scope="col" class=  'text-center'>Food Image</th>
-                            </tr>
-                        </thead>
-                        <tbody id = "div__results-container">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" class = 'text-center'>Food Info</th>
+                            <th scope="col" class=  'text-center'>Food Image</th>
+                        </tr>
+                    </thead>
+                    <tbody id = "div__results-container">
 
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
-            <br>
-            <div>
-                <div class = 'd-flex justify-content-between'>
-                    <div>
-                        <h4>
-                            Stored Foods
-                        </h4>
-                    </div>
-                    <div>
-                        <h4>
-                            Total Kilocalories: <span id = "span__total-kcals" class = 'text-success'>0</span>
-                        </h4>
-                    </div>
-                </div>
-                <div id = "div__saved-food-container"
-                style="overflow-y:scroll;max-height:15rem;"
-                >
-
-                </div>
-                <span id = 'span__hidden-offset' style='display:none'>
-                    0
-                </span>
-            </div>
-            <div id = 'div__chart-holder'>
+        </div>
+        <br>
+        <div>
+            <div class = 'd-flex justify-content-between'>
                 <div>
                     <h4>
-                        Macronutrient Charts
+                        Stored Foods
                     </h4>
                 </div>
-                <div class = 'div__chart-container'>
-                    <div class = 'row'>
-                        <div class = 'div__graph-section' id = 'div__group-01'>
-                            <div class = 'col-6'>
-                                <canvas id ='canvas__fat-totals'>
+            </div>
+            <div id = "div__saved-food-container"
+            style="overflow-y:scroll;max-height:15rem;height:15rem;"
+            >
 
-                                </canvas>
-                            </div>
-                            <div class = 'col-6'>
-                                <canvas id ='canvas__calories-totals'>
-
-                                </canvas>
-                            </div>
+            </div>
+            <span id = 'span__hidden-offset' style='display:none'>
+                0
+            </span>
+        </div>
+        <div id = 'div__chart-holder'>
+        <div id = "div__graph-container">
+            <div class = 'row'>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name ='fat' data-limit='1200'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart' id = "canvas__fat-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Fat
+                            </h2>
+                            <smalL>
+                                Limit: 1200
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-fat" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
                         </div>
+                        <br>
+                    </div>
+                </div>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name = "calorie" data-limit ='2300'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart'
+                            id = "canvas__calorie-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Calories
+                            </h2>
+                            <smalL>
+                                Limit: 2300
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-calorie" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
                     </div>
                 </div>
             </div>
-        </div> 
+            <br>
+            <div class = 'row'>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name ='potassium' data-limit='1800'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart' id = "canvas__potassium-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Potassium
+                            </h2>
+                            <smalL>
+                                Limit: 1800
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-potassium" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <div class= 'col-6'>
+                    <div class = 'div__graph-section text-center
+                    p-3 border rounded
+                    ' data-name = "fiber" data-limit ='1500'
+                    >
+                        <div class = 'div__chart-holder'>
+                            <canvas class = 'canvas__chart'
+                            id = "canvas__fiber-totals"></canvas>
+                            <h2 class = 'text__graph-title'>
+                                Fiber
+                            </h2>
+                            <smalL>
+                                Limit: 1500
+                            </small>
+                            <br>
+                            <small>
+                                Used: 
+                                <span id = "span__total-fiber" class ='text-success'>
+                                    0 
+                                </span>
+                            </small>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div> 
 
 <!-- 
     For hidden menustat entry
@@ -171,10 +253,78 @@
 
 </html>
 <script>
+    // store the chart objects and their limits
+    // access like
+    // __CHARTS[CHART_NAME]['chart'] -> gives the chart itself
+    // __CHARTS[CHART_NAME]['limit'] -> gives the chart nutrient limit
+    //
+    var __CHARTS = {
+
+    };
+
+    // standard pie chart colors
+    // find out why my css is not working
+    //
+    var __CHART_COLORS = {
+        'my-green':"#4ad323",
+        'my-red':'#e00814',
+        'my-black':'#080808'
+    }
+
     // functions on start
     //
     $(document).ready(()=>{
+        // allow for scrolling more
+        //
         scrollMore();
+        // set up charts
+        //
+        $('.div__graph-section').each((i,e)=>{
+            // get name of chart
+            var strName = $(e).attr('data-name');
+            // the nutrient limit
+            var intNutrientLimit = parseInt($(e).attr('data-limit'));
+            // the chart id
+            var strChartId = $(e).find('.canvas__chart').first().attr('id');
+            var xVals = ['Remaining','Used'];
+            var yVals = [intNutrientLimit,0];
+            var chart = new Chart(strChartId,{
+                type:'doughnut',
+                data:{
+                    labels:xVals,
+                    datasets:[{
+                        backgroundColor:[__CHART_COLORS['my-black'],__CHART_COLORS['my-green']],
+                        data:yVals,
+                        borderWidth:2,
+                        borderColor:__CHART_COLORS['my-black'],
+                        hoverBorderWidth:0,
+                    }]
+                },
+                plugins:[{
+                    beforeDraw:function(chart){
+                        var w = chart.chart.width;
+                        var h = chart.chart.height;
+                        var ctx = chart.chart.ctx;
+                        var fontSize = h / 112;
+                        ctx.font = fontSize + 'em sans-serif';
+                        ctx.textBaseline = 'middle';
+                        var text = "0%";
+                        var textX = Math.round((w- ctx.measureText(text).width)/2);
+                        var textY = h / 2;
+
+                        ctx.fillText(text,textX,textY);
+                        ctx.save();
+                    }
+                }],
+                options:{
+                    legend:{
+                        display:false,
+                    }
+                }
+            })
+            __CHARTS[strName]= {'chart':chart,'limit':intNutrientLimit};
+        })
+
     });
 
     // function to allow other function to 
@@ -190,127 +340,215 @@
     }
 
     // add to saved button //
-    function addToSavedClick(strDataType,modalModal){
+    function addToSavedClick(strDataType,modalModal,trE){
+        // disable to table row
+        $(trE).css('background-color','silver');
+        // remove the onclick
+        $(trE).attr("onclick","");
+        // now hide the model
         $(modalModal).modal('hide');
+
         // depending on data type, change how saved info looks
         //
         // get name of food 
         let strFoodName = $(modalModal).find('.span__description').first().text();
         // get img src
         let strImgSrc = $(modalModal).find('.img__food-img').first().attr('src');
+
         // for saved entry
-        let divSavedEntry = ""
-        
+        let divSavedEntry = null;
+        // for macronutrients
+        let intAddKcals= null;
+        let intAddProtein = null;
+        let intAddFiber = null;
+        let intAddPotassium = null;
+        let intAddFat = null;
+        // get serving size
+        let strServingSize = null;
+
+        // get the current popup data
+        // ie the selected serving size's data
+        //
+        let divPopupData = null;
+        $.each((modalModal).find('.div__popup-data'),(index,element)=>{
+            if($(element).css('display') != 'none'){
+                divPopupData = $(element);
+                intAddKcals = parseInt(divPopupData.find('.span__calorie-amount').first().text());
+                intAddProtein = parseInt(divPopupData.find('.span__protein-amount').first().text());
+                intAddFat = parseInt(divPopupData.find('.span__fat-amount').first().text());
+                intAddPotassium = parseInt(divPopupData.find('.span__potassium-amount').first().text());
+                intAddFiber = parseInt(divPopupData.find('.span__fiber-amount').first().text());
+                strServingSize = divPopupData.find('.span__serving-size').first().text();
+            }
+        });
+
+        // now append data unique to each db
+        //
         if(strDataType == 'usda_non-branded'){
+            // get div
             divSavedEntry = $('#div__hidden-saved-entry-usda_non_branded').clone();
-            // remove id
-            divSavedEntry.attr('id','');
-
-            // get info
-
-            $.each((modalModal).find('.div__popup-data'),function(index,element){
-                // get element that is visible
-                if($(element).css('display') != 'none'){
-                    // get info from element
-                    //
-                    let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
-                    let strServingSize = $(element).find('.span__serving-size').first().text();
-                    // put in info into saved entry
-                    //
-                    divSavedEntry.find('.span__description').first().text(strFoodName);
-                    divSavedEntry.find('.span__kilocalories').text(strKcals);
-                    divSavedEntry.find('.span__serving-size').first().text(strServingSize);
-                    divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
-                    // add the kcals to the total
-                    //
-                    addToTotalKcals(parseInt(strKcals));
-                }
-            });
         }else if(strDataType == 'menustat'){
             // get the div
             divSavedEntry = $('#div__hidden-saved-entry-menustat').clone();
-            // remove id
-            divSavedEntry.attr('id','');
-            // get info
-            $.each((modalModal).find('.div__popup-data'),function(index,element){
-                // get element that is visible
-                if($(element).css('display')!='none'){
-                    // get info from element
-                    //
-                    let strRestaurant = $(element).find('.span__restaurant').first().text();
-                    let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
-                    let strServingSize = $(element).find('.span__serving-size').first().text();
-                    // put in info into saved entry
-                    //
-                    divSavedEntry.find('.span__description').first().text(strFoodName);
-                    divSavedEntry.find('.span__kilocalories').text(strKcals);
-                    divSavedEntry.find('.span__serving-size').first().text(strServingSize);
-                    divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
-                    divSavedEntry.find('.span__restaurant').first().text(strRestaurant);
-                    // add the kcals to the total
-                    //
-                    addToTotalKcals(parseInt(strKcals));
-                }
-            });
+            // get info specific to this db
+            //
+            let strRestaurant= $(divPopupData).find('.span__restaurant').first().text();
+            divSavedEntry.find('.span__restaurant').first().text(strRestaurant);
         }else if(strDataType == 'usda_branded'){
             // get the div
             divSavedEntry = $('#div__hidden-saved-entry-usda_branded').clone();
-            // remove id
-            divSavedEntry.attr('id','');
-            // get info
-            $.each((modalModal).find('.div__popup-data'),function(index,element){
-                // get element that is visible
-                if($(element).css('display')!='none'){
-                    // get info from element
-                    //
-                    let strBrandOwner = $(element).find('.span__brand-owner').first().text();
-                    let strKcals = $(element).find('.span__kilocalorie-amount').first().text();
-                    let strServingSize = $(element).find('.span__serving-size').first().text();
-                    // put in info into saved entry
-                    //
-                    divSavedEntry.find('.span__description').first().text(strFoodName);
-                    divSavedEntry.find('.span__kilocalories').text(strKcals);
-                    divSavedEntry.find('.span__serving-size').first().text(strServingSize);
-                    divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
-                    divSavedEntry.find('.span__brand-owner').first().text(strBrandOwner);
-                    // add the kcals to the total
-                    //
-                    addToTotalKcals(parseInt(strKcals));
-                }
-            });
-        }else{
-            console.log('saved entry: invalid db type');
+            // get info specific to this db
+            //
+            let strBrandOwner = $(divPopupData).find('.span__brand-owner').first().text();
+            divSavedEntry.find('.span__brand-owner').first().text(strBrandOwner);
+        }
+        else{
+            alert('invalid db type');
             return;
         }
+        // remove id
+        divSavedEntry.attr('id','')
+        // put in all the relevant data
+        // ie macronutrients, description, etc
+        divSavedEntry.find('.span__calorie-amount').first().text(intAddKcals);
+        divSavedEntry.find('.img__saved-entry').first().attr('src',strImgSrc);
+        divSavedEntry.find('.span__description').first().text(strFoodName);
+        divSavedEntry.find('.span__serving-size').first().text(strServingSize);
+        divSavedEntry.find('.span__potassium-amount').first().text(intAddPotassium);
+        divSavedEntry.find('.span__fiber-amount').first().text(intAddFiber);
+        divSavedEntry.find('.span__fat-amount').first().text(intAddFat);
+        divSavedEntry.find('.span__protein-amount').first().text(intAddProtein)
+
+        // add the hidden nutrient amount
+        // this is used to keep track of how many nutrient each serving of 
+        // the item is
+        //
+        divSavedEntry.find('.span__hidden-calorie-amount').first().text(intAddKcals)
+        divSavedEntry.find('.span__hidden-fiber-amount').first().text(intAddFiber)
+        divSavedEntry.find('.span__hidden-potassium-amount').first().text(intAddPotassium)
+        divSavedEntry.find('.span__hidden-fat-amount').first().text(intAddFat)
+        divSavedEntry.find('.span__hidden-protein-amount').first().text(intAddFat)
+
+        // now add to the previous amount
+        //
+        intNewKcals = parseInt($("#span__total-calorie").first().text()) + intAddKcals
+        intNewFiber = parseInt($("#span__total-fiber").first().text()) + intAddFiber
+        intNewFat = parseInt($("#span__total-fat").first().text()) + intAddFat
+        intNewPotassium = parseInt($("#span__total-potassium").first().text()) + intAddPotassium
+
+        updateNutrientTotalSpan(intNewKcals,'calorie');
+        updateNutrientTotalSpan(intNewFat,'fat');
+        updateNutrientTotalSpan(intNewFiber,'fiber');
+        updateNutrientTotalSpan(intNewPotassium,'potassium');
+
+        // update graphs
+        //
+        updateChart($('#span__total-calorie'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart']);
+        updateChart($('#span__total-fat'),__CHARTS['fat']['limit'],__CHARTS['fat']['chart']);
+        updateChart($('#span__total-fiber'),__CHARTS['fiber']['limit'],__CHARTS['fiber']['chart']);
+        updateChart($('#span__total-potassium'),__CHARTS['potassium']['limit'],__CHARTS['potassium']['chart']);
         // make visible
         //
         divSavedEntry.css('display','');
         // give a remove feature
         //
         divSavedEntry.find('.svg__x-clicker').first().click(()=>{
-            // remove current kcals 
+            // remove current macronutrients 
             //
-            let intCurrentKcals = parseInt(divSavedEntry.find('.span__kilocalories').first().text());
-            addToTotalKcals(-1*intCurrentKcals);
+            let intRemoveKcals= -1*parseInt(divSavedEntry.find('.span__calorie-amount').first().text());
+            let intRemoveFat= -1*parseInt(divSavedEntry.find('.span__fat-amount').first().text());
+            let intRemoveFiber= -1*parseInt(divSavedEntry.find('.span__fiber-amount').first().text());
+            let intRemovePotassium= -1*parseInt(divSavedEntry.find('.span__potassium-amount').first().text());
+
+            // get the new totals
+            //
+            let intNewKcals = parseInt($('#span__total-calorie').first().text()) + intRemoveKcals
+            let intNewFat = parseInt($('#span__total-fat').first().text()) + intRemoveFat
+            let intNewFiber = parseInt($('#span__total-fiber').first().text()) + intRemoveFiber
+            let intNewPotassium = parseInt($('#span__total-potassium').first().text()) + intRemovePotassium
+
+
+            updateNutrientTotalSpan(intNewKcals,'calorie');
+            updateNutrientTotalSpan(intNewFat,'fat');
+            updateNutrientTotalSpan(intNewFiber,'fiber');
+            updateNutrientTotalSpan(intNewPotassium,'potassium');
+
+            // remove from graph
+            //
+            updateChart($('#span__total-calorie'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
+            updateChart($('#span__total-fat'),__CHARTS['fat']['limit'],__CHARTS['fat']['chart'])
+            updateChart($('#span__total-fiber'),__CHARTS['fiber']['limit'],__CHARTS['fiber']['chart'])
+            updateChart($('#span__total-potassium'),__CHARTS['potassium']['limit'],__CHARTS['potassium']['chart'])
+
+            // make the table row able to be clicked again
+            // and update the background color
+            //
+            $(trE).attr('onclick','displayMore(this)');
+            $(trE).css('background-color','');
+
             divSavedEntry.remove();
         });
         // when update Qty update kcal amount
         //
         divSavedEntry.find('.input__saved-entry-qty').first().change(()=>{
-            // get original kcal amount
-            let intOriginalKcals = parseInt(divSavedEntry.find('.span__hidden-kilocalories').first().text());
-            // get current value
-            let intCurrentKcals = parseInt(divSavedEntry.find('.span__kilocalories').first().text());
+            // get original nutrient amount
+            //
+            let intOriginalKcals = parseInt(divSavedEntry.find('.span__hidden-calorie-amount').first().text());
+            let intOriginalFiber = parseInt(divSavedEntry.find('.span__hidden-fiber-amount').first().text());
+            let intOriginalFat = parseInt(divSavedEntry.find('.span__hidden-fat-amount').first().text());
+            let intOriginalPotassium = parseInt(divSavedEntry.find('.span__hidden-potassium-amount').first().text());
+            let intOriginalProtein = parseInt(divSavedEntry.find('.span__hidden-protein-amount').first().text())
 
-            // mulptiply it by the current value of input
+
+            // multiply by the current value of input
+            //
             let intMultiplier = parseInt(divSavedEntry.find('.input__saved-entry-qty').first().val());
+
+            // get original values
+            //
+            let intCurrentKcals = parseInt(divSavedEntry.find('.span__calorie-amount').first().text())
+            let intCurrentFat = parseInt(divSavedEntry.find('.span__fat-amount').first().text())
+            let intCurrentFiber = parseInt(divSavedEntry.find('.span__fiber-amount').first().text())
+            let intCurrentPotassium = parseInt(divSavedEntry.find('.span__potassium-amount').first().text())
+            // subtract the currents
+            //
+
             // get new val
-            let intNewVal = intOriginalKcals * intMultiplier;
-            // update kcal count for individual entry
-            divSavedEntry.find('.span__kilocalories').first().text(intNewVal);
-            // update total kcal count by subtracting the current kcals and then adding the new
-            addToTotalKcals(-1*intCurrentKcals);
-            addToTotalKcals(intNewVal);
+            //
+            let intNewKcals = intOriginalKcals * intMultiplier;
+            let intNewFat = intOriginalFat * intMultiplier;
+            let intNewFiber = intOriginalFiber * intMultiplier;
+            let intNewPotassium = intOriginalPotassium * intMultiplier;
+            let intNewProtein = intOriginalProtein * intMultiplier
+
+            // update nutrient count for individual entry
+            //
+            divSavedEntry.find('.span__calorie-amount').first().text(intNewKcals);
+            divSavedEntry.find('.span__fat-amount').first().text(intNewFat);
+            divSavedEntry.find('.span__fiber-amount').first().text(intNewFiber);
+            divSavedEntry.find('.span__potassium-amount').first().text(intNewPotassium);
+            divSavedEntry.find('.span__protein-amount').first().text(intNewProtein);
+            
+            // need the original totals to update the spans
+            //
+            let intNewTotalKcals = parseInt($("#span__total-calorie").first().text()) + intNewKcals - intCurrentKcals
+            let intNewTotalFat = parseInt($("#span__total-fat").first().text()) + intNewFat - intCurrentFat
+            let intNewTotalFiber = parseInt($("#span__total-fiber").first().text()) + intNewFiber - intCurrentFiber
+            let intNewTotalPotassium = parseInt($("#span__total-potassium").first().text()) + intNewPotassium - intCurrentPotassium
+
+            updateNutrientTotalSpan(intNewTotalKcals,'calorie');
+            updateNutrientTotalSpan(intNewTotalFat,'fat');
+            updateNutrientTotalSpan(intNewTotalFiber,'fiber');
+            updateNutrientTotalSpan(intNewTotalPotassium,'potassium');
+            
+
+            // update the charts
+            //
+            updateChart($('#span__total-calorie'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
+            updateChart($('#span__total-fat'),__CHARTS['fat']['limit'],__CHARTS['fat']['chart'])
+            updateChart($('#span__total-fiber'),__CHARTS['fiber']['limit'],__CHARTS['fiber']['chart'])
+            updateChart($('#span__total-potassium'),__CHARTS['potassium']['limit'],__CHARTS['potassium']['chart'])
+
         })
             
         // append to saved
@@ -331,20 +569,17 @@
         // ie: menustat, usda_branded, usda_non_branded
         //
         var strDBType = $("#select__db-options").val();
-        console.log(strDBType);
-        // if fdc_id present, get
+        // get id
         //
-        var strFdcId = $(trE).attr('data-fdc-id');
+        var strId = $(trE).attr('data-id');
 
         $.ajax({
             url: "php/funcs/query_info.php",
             type:'GET',
             dataType:'html',
             data:{
-                strFoodName:strFoodName,
-                strRestaurantName: strRestaurantName,
                 strDBType:strDBType,
-                strFdcId:strFdcId
+                strId:strId,
             },
             success:function(data){
                 // data is an array of
@@ -354,9 +589,8 @@
                 //
 
                 // sanity check
-                // console.log(data);
+                // console.log(data)
                 let arrData = JSON.parse(data);
-
 
                 // datatype
                 //
@@ -397,7 +631,7 @@
                 // add a save feature
                 //
                 $('#simpleModal').find('.btn__add-to-saved').first().click(()=>{
-                    addToSavedClick(strDBType,$('#simpleModal'));
+                    addToSavedClick(strDBType,$('#simpleModal'),trE);
                 })
                 
             }
@@ -445,7 +679,7 @@
             function(arrFoods, textStatus, jqXHR){
                 $('#div__results-container').html(arrFoods);
             }
-        )
+        );
     };
 
     // get names from db
@@ -504,11 +738,9 @@
                 // need to update the offset
                 $('#span__hidden-offset').text(intNewOffset);
                 // console.log('old offset: '$(''))
-
-                console.log('end of scroll');
-                $.when(ajaxGetFoodSearchResults(strFoodName, strDBType,intNewOffset)).done(
-                    function(arrFoods,textStatus,jqXHR){
-                        // append the data
+                $.when(ajaxGetFoodSearchResults(strFoodName,strDBType,intNewOffset)).done(
+                    function(arrFoods, textStatus, jqXHR){
+                        // append data
                         //
                         $('#div__results-container').append(arrFoods);
                     }
@@ -517,14 +749,93 @@
         })
     }
 
-    function addToTotalKcals(intVal){
-        // adds to span__total-kcals value
+    // update a chart with an added value
+    // note that we only update if the new value is within
+    // 0 - intLimit
+    // else we are still over limit and it doesn't matter to update
+    // NOTE:
+    // THIS IS DEPENDENT ON THE TOTAL KCALS VALUE
+    // MAKE SURE THAT THAT VALUE UPDATES PRIOR TO 
+    // UPDATING CHART
+    //
+    function updateChart(spanUpdateSpan,intLimit,chartChart){
+        // get the original value
+
+        // yVals[0] = remaining
+        // yVals[1] = used
+        var yVals = chartChart.data.datasets[0].data;
+
+        var intFinalAfterAdding = parseInt(spanUpdateSpan.text());
+
+        if(intFinalAfterAdding>= intLimit){
+            // don't do anything as we are still above the limit
+            // only change the background color / border if it is not already changed
+            //
+            if(chartChart.chart.data.datasets[0].backgroundColor[1] != __CHART_COLORS['my-red']){
+                // change to red
+                chartChart.chart.data.datasets[0].backgroundColor[1] = __CHART_COLORS['my-red'];
+                // change span of data type to red
+                spanUpdateSpan.css('color','red');
+                
+                // remove border
+                chartChart.chart.data.datasets[0] .borderWidth = 0;
+                // update the text to be 100%
+                yVals[0] = 0;
+                yVals[1] = intLimit;
+                chartChart.update();
+            }
+            return;
+        }
+        // else we just continue 
+
+        // add to used and take away from remaining
+        yVals[1] = intFinalAfterAdding;
+        yVals[0] = intLimit - intFinalAfterAdding;
+
+        if(chartChart.chart.data.datasets[0].backgroundColor[1] ==__CHART_COLORS['my-red']){
+            chartChart.chart.data.datasets[0].backgroundColor[1] = __CHART_COLORS['my-green'];
+                spanUpdateSpan.css('color','green');
+            chartChart.chart.data.datasets[0].borderWidth = 2;
+        }
+        // else you just update chart
+        chartChart.data.datasets[0].data = yVals;
+        // update the ctx
+        chartChart.config.plugins[0].beforeDraw = function(chart,options){
+            var w = chart.chart.width;
+            var h = chart.chart.height;
+            var ctx = chart.chart.ctx;
+            var fontSize = h / 112;
+            ctx.font = fontSize + 'em sans-serif';
+            ctx.textBaseline = 'middle';
+            var text = Math.ceil((yVals[1] / intLimit)*100) + "%";
+            var textX = Math.round((w- ctx.measureText(text).width)/2);
+            var textY = h / 2;
+
+            ctx.fillText(text,textX,textY);
+            ctx.save();
+        }
+        chartChart.update();
+    };
+
+    // add a kcal value to the total kcals
+    //
+    function updateNutrientTotalSpan(intNewVal,strNutrientType){
+        let spanTotalNutrient = null;
+
+        if(strNutrientType == "calorie"){
+            spanTotalNutrient = $('#span__total-calorie')
+        }else if(strNutrientType == "fat"){
+            spanTotalNutrient = $('#span__total-fat')
+        }else if(strNutrientType == "potassium"){
+            spanTotalNutrient = $('#span__total-potassium')
+        }else if(strNutrientType == "fiber"){
+            spanTotalNutrient = $('#span__total-fiber')
+        }
+
+        // adds to span__total-calorie value
         //
-        // get original value
-        let intOriginalValue = parseInt($("#span__total-kcals").text());
-        let intNewVal = intOriginalValue + intVal;
         // set new val
-        $("#span__total-kcals").text(intNewVal);
+        spanTotalNutrient.text(intNewVal);
     }
 
     // on click clockwise clicker query
@@ -550,10 +861,5 @@
     $("#input__per-page").change(()=>{
         voidQueryNamesInitial();
     })
-
-    // for graphs
-    var xFatLabel = ['Total Fat']
-    var yFatValues = []
-
 
 </script>

@@ -1,27 +1,22 @@
 <?php
 
 function strGetImgPath($strFoodName,$strRestaurantName,$strSourcePath){
-    // returns NULL or image path
-    // essentially we are redoing what we did in scrape.py
-    // 's strSlugName(strName) function.
-    // (see https://github.com/lxaw/menustat-food-db)
+    // Return imgs path
     //
-    $strFormattedFoodName = str_replace("/","~",$strFoodName);
-    $strFormattedFoodName= str_replace(" ","_",$strFormattedFoodName);
+    $strFormattedFoodName = preg_replace('/[\W]/','',$strFoodName);
 
-    $strFormattedRestName = str_replace("/","~",$strRestaurantName);
-    $strFormattedRestName = str_replace(" ","_",$strRestaurantName);
+    $strFormattedRestName= preg_replace('/[\W]/','',$strRestaurantName);
 
     return 
-        strtolower($strSourcePath."/".$strFormattedRestName."/".$strFormattedRestName."___".$strFormattedFoodName.".jpeg");
+        $strSourcePath."/".$strFormattedRestName."/".$strFormattedFoodName.".jpeg";
 }
 
 function strGetImgPathNoRestaurant($strFoodName,$strSourcePath){
     // for usda_no_branded
     // TO DO:
     // See if better way to do this.
-    $strFormattedFoodName = str_replace("/","~",$strFoodName);
-    $strFormattedFoodName= str_replace(" ","_",$strFormattedFoodName);
+    $strFormattedFoodName = preg_replace('/[\W]/','',$strFoodName);
+
     return 
-        strtolower($strSourcePath."/".$strFormattedFoodName.".jpeg");
+        $strSourcePath."/".$strFormattedFoodName.".jpeg";
 }
