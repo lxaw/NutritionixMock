@@ -250,8 +250,11 @@
 <div id = "div__modal-holder">
 
 </div>
-
 </html>
+
+<!-- custom charts -->
+<script src = "./js/NutrientPieChart.js"></script>
+
 <script>
     // store the chart objects and their limits
     // access like
@@ -262,14 +265,6 @@
 
     };
 
-    // standard pie chart colors
-    // find out why my css is not working
-    //
-    var __CHART_COLORS = {
-        'my-green':"#4ad323",
-        'my-red':'#e00814',
-        'my-black':'#080808'
-    }
 
     // functions on start
     //
@@ -286,43 +281,8 @@
             var intNutrientLimit = parseInt($(e).attr('data-limit'));
             // the chart id
             var strChartId = $(e).find('.canvas__chart').first().attr('id');
-            var xVals = ['Remaining','Used'];
-            var yVals = [intNutrientLimit,0];
-            var chart = new Chart(strChartId,{
-                type:'doughnut',
-                data:{
-                    labels:xVals,
-                    datasets:[{
-                        backgroundColor:[__CHART_COLORS['my-black'],__CHART_COLORS['my-green']],
-                        data:yVals,
-                        borderWidth:2,
-                        borderColor:__CHART_COLORS['my-black'],
-                        hoverBorderWidth:0,
-                    }]
-                },
-                plugins:[{
-                    beforeDraw:function(chart){
-                        var w = chart.chart.width;
-                        var h = chart.chart.height;
-                        var ctx = chart.chart.ctx;
-                        var fontSize = h / 112;
-                        ctx.font = fontSize + 'em sans-serif';
-                        ctx.textBaseline = 'middle';
-                        var text = "0%";
-                        var textX = Math.round((w- ctx.measureText(text).width)/2);
-                        var textY = h / 2;
-
-                        ctx.fillText(text,textX,textY);
-                        ctx.save();
-                    }
-                }],
-                options:{
-                    legend:{
-                        display:false,
-                    }
-                }
-            })
-            __CHARTS[strName]= {'chart':chart,'limit':intNutrientLimit};
+            var pieChart = new NutrientPieChart(strName,strChartId,"increase","black","green","red",intNutrientLimit)
+            __CHARTS[strName]= pieChart;
         })
 
     });
@@ -443,10 +403,23 @@
 
         // update graphs
         //
-        updateChart($('#span__total-calorie'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart']);
-        updateChart($('#span__total-fat'),__CHARTS['fat']['limit'],__CHARTS['fat']['chart']);
-        updateChart($('#span__total-fiber'),__CHARTS['fiber']['limit'],__CHARTS['fiber']['chart']);
-        updateChart($('#span__total-potassium'),__CHARTS['potassium']['limit'],__CHARTS['potassium']['chart']);
+        __CHARTS['calorie'].voidUpdateChart(parseInt($('#span__total-calorie').text()))
+        __CHARTS['fat'].voidUpdateChart(parseInt($('#span__total-fat').text()))
+        __CHARTS['fiber'].voidUpdateChart(parseInt($('#span__total-fiber').text()))
+        __CHARTS['potassium'].voidUpdateChart(parseInt($('#span__total-potassium').text()))
+        // update spans
+        if(__CHARTS['calorie'].getBoolIsOver()){
+            $('#span__total-calorie').css('color',__CHARTS['calorie'].getStrColorOver())
+        }
+        if(__CHARTS['fat'].getBoolIsOver()){
+            $('#span__total-fat').css('color',__CHARTS['fat'].getStrColorOver())
+        }
+        if(__CHARTS['fiber'].getBoolIsOver()){
+            $('#span__total-fiber').css('color',__CHARTS['fiber'].getStrColorOver())
+        }
+        if(__CHARTS['potassium'].getBoolIsOver()){
+            $('#span__total-potassium').css('color',__CHARTS['potassium'].getStrColorOver())
+        }
         // make visible
         //
         divSavedEntry.css('display','');
@@ -473,12 +446,25 @@
             updateNutrientTotalSpan(intNewFiber,'fiber');
             updateNutrientTotalSpan(intNewPotassium,'potassium');
 
-            // remove from graph
+            // update graphs
             //
-            updateChart($('#span__total-calorie'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
-            updateChart($('#span__total-fat'),__CHARTS['fat']['limit'],__CHARTS['fat']['chart'])
-            updateChart($('#span__total-fiber'),__CHARTS['fiber']['limit'],__CHARTS['fiber']['chart'])
-            updateChart($('#span__total-potassium'),__CHARTS['potassium']['limit'],__CHARTS['potassium']['chart'])
+            __CHARTS['calorie'].voidUpdateChart(parseInt($('#span__total-calorie').text()))
+            __CHARTS['fat'].voidUpdateChart(parseInt($('#span__total-fat').text()))
+            __CHARTS['fiber'].voidUpdateChart(parseInt($('#span__total-fiber').text()))
+            __CHARTS['potassium'].voidUpdateChart(parseInt($('#span__total-potassium').text()))
+            // update spans
+            if(__CHARTS['calorie'].getBoolIsOver()){
+                $('#span__total-calorie').css('color',__CHARTS['calorie'].getStrColorOver())
+            }
+            if(__CHARTS['fat'].getBoolIsOver()){
+                $('#span__total-fat').css('color',__CHARTS['fat'].getStrColorOver())
+            }
+            if(__CHARTS['fiber'].getBoolIsOver()){
+                $('#span__total-fiber').css('color',__CHARTS['fiber'].getStrColorOver())
+            }
+            if(__CHARTS['potassium'].getBoolIsOver()){
+                $('#span__total-potassium').css('color',__CHARTS['potassium'].getStrColorOver())
+            }
 
             // make the table row able to be clicked again
             // and update the background color
@@ -499,7 +485,6 @@
             let intOriginalPotassium = parseInt(divSavedEntry.find('.span__hidden-potassium-amount').first().text());
             let intOriginalProtein = parseInt(divSavedEntry.find('.span__hidden-protein-amount').first().text())
 
-
             // multiply by the current value of input
             //
             let intMultiplier = parseInt(divSavedEntry.find('.input__saved-entry-qty').first().val());
@@ -510,8 +495,6 @@
             let intCurrentFat = parseInt(divSavedEntry.find('.span__fat-amount').first().text())
             let intCurrentFiber = parseInt(divSavedEntry.find('.span__fiber-amount').first().text())
             let intCurrentPotassium = parseInt(divSavedEntry.find('.span__potassium-amount').first().text())
-            // subtract the currents
-            //
 
             // get new val
             //
@@ -541,13 +524,27 @@
             updateNutrientTotalSpan(intNewTotalFiber,'fiber');
             updateNutrientTotalSpan(intNewTotalPotassium,'potassium');
             
-
             // update the charts
             //
-            updateChart($('#span__total-calorie'),__CHARTS['calorie']['limit'],__CHARTS['calorie']['chart'])
-            updateChart($('#span__total-fat'),__CHARTS['fat']['limit'],__CHARTS['fat']['chart'])
-            updateChart($('#span__total-fiber'),__CHARTS['fiber']['limit'],__CHARTS['fiber']['chart'])
-            updateChart($('#span__total-potassium'),__CHARTS['potassium']['limit'],__CHARTS['potassium']['chart'])
+            // update graphs
+            //
+            __CHARTS['calorie'].voidUpdateChart(parseInt($('#span__total-calorie').text()))
+            __CHARTS['fat'].voidUpdateChart(parseInt($('#span__total-fat').text()))
+            __CHARTS['fiber'].voidUpdateChart(parseInt($('#span__total-fiber').text()))
+            __CHARTS['potassium'].voidUpdateChart(parseInt($('#span__total-potassium').text()))
+            // update spans
+            if(__CHARTS['calorie'].getBoolIsOver()){
+                $('#span__total-calorie').css('color',__CHARTS['calorie'].getStrColorOver())
+            }
+            if(__CHARTS['fat'].getBoolIsOver()){
+                $('#span__total-fat').css('color',__CHARTS['fat'].getStrColorOver())
+            }
+            if(__CHARTS['fiber'].getBoolIsOver()){
+                $('#span__total-fiber').css('color',__CHARTS['fiber'].getStrColorOver())
+            }
+            if(__CHARTS['potassium'].getBoolIsOver()){
+                $('#span__total-potassium').css('color',__CHARTS['potassium'].getStrColorOver())
+            }
 
         })
             
@@ -831,7 +828,6 @@
         }else if(strNutrientType == "fiber"){
             spanTotalNutrient = $('#span__total-fiber')
         }
-
         // adds to span__total-calorie value
         //
         // set new val
