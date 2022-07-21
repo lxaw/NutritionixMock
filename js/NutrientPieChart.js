@@ -24,6 +24,7 @@ class NutrientPieChart{
         Integer limit for macronutrient amount. When go over the chart turns color `strColorOver`.
     */
     constructor(strTitle,strId,strChartType,strColorBg,strColorFg,strColorOver,intLimit){
+        // id of html element that shows the total amount of nutrient
         this.strId = strId;
 
         this.strChartType=strChartType;
@@ -33,7 +34,11 @@ class NutrientPieChart{
         this.strColorOver=strColorOver;
         this.strTitle=strTitle;
 
+        // the upper bound on how much nutrient is allowed
         this.intLimit = intLimit;
+
+        // the total amount of nutrient consumed 
+        this.intTotalNutrientConsumed = 0
         
         // reference to chart object
         this.chart = null;
@@ -43,10 +48,24 @@ class NutrientPieChart{
 
         this.voidGenerateChart()
     }
+    ////
     // getters
-
+    //
     getIntLimit(){
         return this.intLimit
+    }
+    intGetTotalNutrientConsumed(){
+        return this.intTotalNutrientConsumed;
+    }
+    intGetRemainingNutrient(){
+        if(this.boolIsOver){
+            return 0;
+        }
+        if(this.strChartType == "decrease"){
+            return this.chart.data.datasets[0].data[1]
+        }else if(this.strChartType == "increase"){
+            return  this.chart.data.datasets[0].data[0]
+        }
     }
     getChart(){
         return this.chart
@@ -56,6 +75,9 @@ class NutrientPieChart{
     }
     getStrColorOver(){
         return this.strColorOver
+    }
+    strGetType(){
+        return this.strChartType
     }
 
     /*
@@ -119,16 +141,19 @@ class NutrientPieChart{
     }
 
     voidUpdateChart(intNewVal){
+        this.intTotalNutrientConsumed= intNewVal
         // y values of chart
         // yVals[0] = amount of nutrients remaining
         // yVals[1] = amount of nutrients used
         var yVals = this.chart.data.datasets[0].data
+        $(this.idTotalNutrientHolder).text(intNewVal)
 
         if(intNewVal >= this.intLimit){
             // dont do anything as we are still above the limit
             // only change the bg color / border if not already changed
             //
             if(this.boolIsOver != true){
+                // now the graph is over capacity
                 this.boolIsOver = true;
                 if(this.strChartType == "decrease"){
                     yVals[0] = this.intLimit
@@ -137,6 +162,7 @@ class NutrientPieChart{
                     yVals[1] = this.intLimit
                     yVals[0] = 0
                 }
+                $(this.idTotalNutrientHolder).css('color',this.strColorOver)
                 this.chart.data.datasets[0].backgroundColor[1] = this.strColorOver;
             }
         }else{
