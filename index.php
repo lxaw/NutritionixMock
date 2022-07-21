@@ -132,8 +132,9 @@
                             </small>
                             <br>
                             <small>
-                                Used: 
-                                <span id = "span__total-fat" class ='text-success'>
+                                Remaining
+                                <span id = "span__remaining-fat" class = 'text-success'>1200</span>
+                                <span style ="display:none" id = "span__total-fat">
                                     0 
                                 </span>
                             </small>
@@ -157,8 +158,9 @@
                             </small>
                             <br>
                             <small>
-                                Used: 
-                                <span id = "span__total-calorie" class ='text-success'>
+                                Remaining:
+                                <span class = 'text-success' id = "span__remaining-calorie">2300</span>
+                                <span style= "display:none" id = "span__total-calorie" >
                                     0 
                                 </span>
                             </small>
@@ -281,7 +283,13 @@
             var intNutrientLimit = parseInt($(e).attr('data-limit'));
             // the chart id
             var strChartId = $(e).find('.canvas__chart').first().attr('id');
-            var pieChart = new NutrientPieChart(strName,strChartId,"increase","black","green","red",intNutrientLimit)
+            var pieChart = null
+
+            if(strName == "calorie" || strName == "fat"){
+                pieChart = new NutrientPieChart(strName,strChartId,"decrease","green","red","green",intNutrientLimit)
+            }else{
+                pieChart = new NutrientPieChart(strName,strChartId,"increase","black","green","red",intNutrientLimit)
+            }
             __CHARTS[strName]= pieChart;
         })
 
@@ -407,12 +415,13 @@
         __CHARTS['fat'].voidUpdateChart(parseInt($('#span__total-fat').text()))
         __CHARTS['fiber'].voidUpdateChart(parseInt($('#span__total-fiber').text()))
         __CHARTS['potassium'].voidUpdateChart(parseInt($('#span__total-potassium').text()))
+
         // update spans
         if(__CHARTS['calorie'].getBoolIsOver()){
-            $('#span__total-calorie').css('color',__CHARTS['calorie'].getStrColorOver())
+            $('#span__remaining-calorie').css('color',__CHARTS['calorie'].getStrColorOver())
         }
         if(__CHARTS['fat'].getBoolIsOver()){
-            $('#span__total-fat').css('color',__CHARTS['fat'].getStrColorOver())
+            $('#span__remaining-fat').css('color',__CHARTS['fat'].getStrColorOver())
         }
         if(__CHARTS['fiber'].getBoolIsOver()){
             $('#span__total-fiber').css('color',__CHARTS['fiber'].getStrColorOver())
@@ -734,7 +743,6 @@
                 var intNewOffset= parseInt($('#span__hidden-offset').text()) + 20;
                 // need to update the offset
                 $('#span__hidden-offset').text(intNewOffset);
-                // console.log('old offset: '$(''))
                 $.when(ajaxGetFoodSearchResults(strFoodName,strDBType,intNewOffset)).done(
                     function(arrFoods, textStatus, jqXHR){
                         // append data
@@ -819,6 +827,7 @@
     function updateNutrientTotalSpan(intNewVal,strNutrientType){
         let spanTotalNutrient = null;
 
+        // for fat and calorie update remainder
         if(strNutrientType == "calorie"){
             spanTotalNutrient = $('#span__total-calorie')
         }else if(strNutrientType == "fat"){
